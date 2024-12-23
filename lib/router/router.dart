@@ -1,3 +1,4 @@
+import 'package:bus_app/pages/bus/bus_info_page.dart';
 import 'package:bus_app/pages/bus/bus_page.dart';
 import 'package:bus_app/pages/map/map_page.dart';
 import 'package:bus_app/pages/settings/settings_page.dart';
@@ -89,6 +90,17 @@ final GoRouter _router = GoRouter(
       path: RouteEnum.settings.path,
       pageBuilder: (context, state) {
         return CupertinoPage(child: SettingsPage());
+      },
+    ),
+    GoRoute(
+      path: RouteEnum.busInfo.path,
+      pageBuilder: (context, state) {
+        Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
+        return CupertinoPage(
+          child: BusInfoPage(
+            heroTag: extra?['heroTag'],
+          ),
+        );
       },
     ),
   ],

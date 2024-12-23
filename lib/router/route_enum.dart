@@ -2,6 +2,8 @@ enum RouteEnum {
   home('/home'),
   map('/map'),
 
+  busInfo('/bus-info'),
+
   settings('/settings'),
   ;
 
