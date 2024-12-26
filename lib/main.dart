@@ -13,12 +13,13 @@ import 'styles/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await PublicMethod.preferenceController();
 
-  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
