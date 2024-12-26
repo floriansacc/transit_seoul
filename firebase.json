@@ -1,0 +1,30 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bus-app-66527",
+          "appId": "1:919691691901:android:af66be50beb042a8a72e14",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "bus-app-66527",
+          "appId": "1:919691691901:ios:ef961dbd1d55d1caa72e14",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bus-app-66527",
+          "configurations": {
+            "android": "1:919691691901:android:af66be50beb042a8a72e14",
+            "ios": "1:919691691901:ios:ef961dbd1d55d1caa72e14"
+          }
+        }
+      }
+    }
+  }
+}

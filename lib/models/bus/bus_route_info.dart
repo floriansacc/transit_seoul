@@ -1,3 +1,5 @@
+import 'package:bus_app/models/bus/bus_msg_header.dart';
+
 class BusRouteInfo {
   const BusRouteInfo({
     required this.msgHeader,
@@ -12,34 +14,6 @@ class BusRouteInfo {
       msgHeader: MsgHeader.fromJson(json['msgHeader'] ?? {}),
       msgBody: MsgBody.fromJson(json['msgBody'] ?? {}),
     );
-  }
-}
-
-class MsgHeader {
-  const MsgHeader({
-    required this.headerCd,
-    required this.headerMsg,
-    required this.itemCount,
-  });
-
-  final String headerCd;
-  final String headerMsg;
-  final int itemCount;
-
-  static MsgHeader fromJson(Map<String, dynamic> json) {
-    return MsgHeader(
-      headerCd: json['headerCd'] ?? '',
-      headerMsg: json['headerMsg'] ?? '',
-      itemCount: json['itemCount'] ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'headerCd': headerCd,
-      'headerMsg': headerMsg,
-      'itemCount': itemCount,
-    };
   }
 }
 
