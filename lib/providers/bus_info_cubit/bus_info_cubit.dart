@@ -21,7 +21,7 @@ class BusInfoCubit extends Cubit<BusInfoState> {
   }) async {
     emit(state.copyWith(status: BusInfoStatus.loading));
 
-    if (state.busInfo?.busRouteId == busNumber) {
+    if (state.busInfo?.busRouteNm == busNumber) {
       debugPrint('bus $busNumber is already in cubit !');
       if (getDetails) {
         await getBusDetails();
@@ -33,6 +33,7 @@ class BusInfoCubit extends Cubit<BusInfoState> {
       BusRouteInfoItem? busInfo = await _repository.getBusById(busNumber);
 
       if (busInfo != null) {
+        debugPrint('got basic info of bus $busNumber');
         emit(
           state.copyWith(
             status: getDetails ? null : BusInfoStatus.success,
