@@ -22,17 +22,17 @@ class MsgBody {
     required this.itemList,
   });
 
-  final List<RouteInfoItem> itemList;
+  final List<BusRouteInfoItem> itemList;
 
   static MsgBody fromJson(Map<String, dynamic> json) {
     return MsgBody(
-      itemList: RouteInfoItem.fromJsonList(json['itemList'] ?? []),
+      itemList: BusRouteInfoItem.fromJsonList(json['itemList'] ?? []),
     );
   }
 }
 
-class RouteInfoItem {
-  const RouteInfoItem({
+class BusRouteInfoItem {
+  const BusRouteInfoItem({
     required this.busRouteId,
     required this.busRouteNm,
     required this.busRouteAbrv,
@@ -50,7 +50,7 @@ class RouteInfoItem {
   });
 
   final int busRouteId;
-  final String busRouteNm;
+  final int busRouteNm;
   final int busRouteAbrv;
   final double length;
   final int routeType;
@@ -64,21 +64,56 @@ class RouteInfoItem {
   final String firstLowTm;
   final String corpNm;
 
-  static List<RouteInfoItem> fromJsonList(List<dynamic> jsonList) {
+  static List<BusRouteInfoItem> fromJsonList(List<dynamic> jsonList) {
     // ignore: unnecessary_lambdas
     return jsonList.map((json) => fromJson(json)).toList();
   }
 
-  static RouteInfoItem fromJson(Map<String, dynamic> json) {
-    return RouteInfoItem(
-      busRouteId: int.parse(json['busRouteId'] ?? '0'),
-      busRouteNm: json['busRouteNm'] ?? '',
-      busRouteAbrv: int.parse(json['busRouteAbrv'] ?? '0'),
-      length: double.parse(json['length'] ?? '0'),
-      routeType: int.parse(json['routeType'] ?? '0'),
+  static BusRouteInfoItem fromJson(Map<String, dynamic> json) {
+    return BusRouteInfoItem(
+      busRouteId: json['busRouteId'] is int
+          ? json['busRouteId'] ?? 0
+          : int.parse(json['busRouteId'] ?? '0'),
+      busRouteNm: json['busRouteNm'] is int
+          ? json['busRouteNm'] ?? 0
+          : int.parse(json['busRouteNm'] ?? '0'),
+      busRouteAbrv: json['busRouteAbrv'] is int
+          ? json['busRouteAbrv'] ?? 0
+          : int.parse(json['busRouteAbrv'] ?? '0'),
+      length: json['length'] is int
+          ? ((json['length'] ?? 0) as int).toDouble()
+          : json['length'] is double
+              ? json['length'] ?? 0
+              : double.parse(json['length'] ?? '0'),
+      routeType: json['routeType'] is int
+          ? json['routeType'] ?? 0
+          : int.parse(json['routeType'] ?? '0'),
       stStationNm: json['stStationNm'] ?? '',
       edStationNm: json['edStationNm'] ?? '',
-      term: int.parse(json['term'] ?? '0'),
+      term: json['term'] is int
+          ? json['term'] ?? 0
+          : int.parse(json['term'] ?? '0'),
+      lastBusYn: json['lastBusYn'] ?? '',
+      lastBusTm: json['lastBusTm'] ?? '',
+      firstBusTm: json['firstBusTm'] ?? '',
+      lastLowTm: json['lastLowTm'] ?? '',
+      firstLowTm: json['firstLowTm'] ?? '',
+      corpNm: json['corpNm'] ?? '',
+    );
+  }
+
+  static BusRouteInfoItem fromFirestore(Map<String, dynamic> json) {
+    return BusRouteInfoItem(
+      busRouteId: json['busRouteId'] ?? 0,
+      busRouteNm: json['busRouteNm'] ?? 0,
+      busRouteAbrv: json['busRouteAbrv'] ?? 0,
+      length: json['length'] is int
+          ? ((json['length'] ?? 0) as int).toDouble()
+          : json['length'] ?? 0,
+      routeType: json['routeType'] ?? 0,
+      stStationNm: json['stStationNm'] ?? '',
+      edStationNm: json['edStationNm'] ?? '',
+      term: json['term'] ?? 0,
       lastBusYn: json['lastBusYn'] ?? '',
       lastBusTm: json['lastBusTm'] ?? '',
       firstBusTm: json['firstBusTm'] ?? '',

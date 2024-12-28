@@ -1,7 +1,11 @@
 import 'package:logger/logger.dart';
 
 final Logger logger = Logger(
-  printer: PrettyPrinter(),
+  printer: PrettyPrinter(
+    // methodCount: 0,
+    printEmojis: true, // Print an emoji for each log message
+    // Should each log print contain a timestamp
+  ),
   filter: null,
   output: null,
 );
