@@ -13,7 +13,9 @@ class MsgHeader {
     return MsgHeader(
       headerCd: json['headerCd'] ?? '',
       headerMsg: json['headerMsg'] ?? '',
-      itemCount: json['itemCount'] ?? 0,
+      itemCount: json['itemCount'] is int
+          ? json['itemCount'] ?? 0
+          : int.parse(json['itemCount'] ?? '0'),
     );
   }
 

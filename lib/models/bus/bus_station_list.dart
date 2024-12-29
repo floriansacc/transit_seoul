@@ -1,3 +1,4 @@
+import 'package:bus_app/controllers/public_method.dart';
 import 'package:bus_app/models/bus/bus_msg_header.dart';
 
 class BusStationList {
@@ -60,9 +61,9 @@ class StationListItem {
   final int busRouteNm;
   final int busRouteAbrv;
   final int seq;
-  final double section;
-  final double station;
-  final int arsId;
+  final int section;
+  final int station;
+  final double arsId;
   final String stationNm;
   final double gpsX;
   final double gpsY;
@@ -85,27 +86,27 @@ class StationListItem {
 
   static StationListItem fromJson(Map<String, dynamic> json) {
     return StationListItem(
-      busRouteId: int.parse(json['busRouteId'] ?? '0'),
-      busRouteNm: int.parse(json['busRouteNm'] ?? '0'),
-      busRouteAbrv: int.parse(json['busRouteAbrv'] ?? '0'),
-      seq: int.parse(json['seq'] ?? '0'),
-      section: double.parse(json['section'] ?? '0'),
-      station: double.parse(json['station'] ?? '0'),
-      arsId: int.parse(json['arsId'] ?? '0'),
-      stationNm: json['stationNm'] ?? '',
-      gpsX: double.parse(json['gpsX'] ?? '0'),
-      gpsY: double.parse(json['gpsY'] ?? '0'),
-      posX: double.parse(json['posX'] ?? '0'),
-      posY: double.parse(json['posY'] ?? '0'),
-      fullSectDist: int.parse(json['fullSectDist'] ?? '0'),
-      direction: json['direction'] ?? '',
-      stationNo: int.parse(json['stationNo'] ?? '0'),
-      routeType: int.parse(json['routeType'] ?? '0'),
       beginTm: json['beginTm'] ?? '',
       lastTm: json['lastTm'] ?? '',
-      trnstnid: int.parse(json['trnstnid'] ?? '0'),
-      sectSpd: double.parse(json['sectSpd'] ?? '0'),
       transYn: json['transYn'] ?? '',
+      stationNm: json['stationNm'] ?? '',
+      busRouteId: PublicMethod.parseInt(json['busRouteId']),
+      busRouteNm: PublicMethod.parseInt(json['busRouteNm']),
+      busRouteAbrv: PublicMethod.parseInt(json['busRouteAbrv']),
+      seq: PublicMethod.parseInt(json['seq']),
+      fullSectDist: PublicMethod.parseInt(json['fullSectDist']),
+      direction: json['direction'] ?? '',
+      stationNo: PublicMethod.parseDouble(json['stationNo']).toInt(),
+      routeType: PublicMethod.parseInt(json['routeType']),
+      trnstnid: PublicMethod.parseInt(json['trnstnid']),
+      section: PublicMethod.parseInt(json['section']),
+      station: PublicMethod.parseInt(json['station']),
+      arsId: PublicMethod.parseDouble(json['arsId']),
+      gpsX: PublicMethod.parseDouble(json['gpsX']),
+      gpsY: PublicMethod.parseDouble(json['gpsY']),
+      posX: PublicMethod.parseDouble(json['posX']),
+      posY: PublicMethod.parseDouble(json['posY']),
+      sectSpd: PublicMethod.parseDouble(json['sectSpd']),
     );
   }
 

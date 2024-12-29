@@ -23,6 +23,42 @@ class PublicMethod {
     GoRouter.of(context).go(path.path, extra: extra);
   }
 
+  static int parseInt(dynamic value) {
+    if (value == null) return 0; // Default value for null
+    if (value is int) return value; // Return the int directly
+    if (value is double) {
+      return value.isNaN
+          ? 0
+          : value.toInt(); // Handle NaN for double and convert to int
+    }
+    if (value is String) {
+      int? parsed = int.tryParse(value);
+      if (parsed != null) return parsed;
+
+      // Handle cases where the string might represent a double
+      double? parsedDouble = double.tryParse(value);
+      return parsedDouble == null || parsedDouble.isNaN
+          ? 0
+          : parsedDouble.toInt();
+    }
+    return 0; // Default value for unexpected types
+  }
+
+  static double parseDouble(dynamic value) {
+    if (value == null) return 0.0; // Default value for null
+    if (value is int) return value.toDouble(); // Convert int to double
+    if (value is double) {
+      return value.isNaN ? 0.0 : value; // Handle NaN for double
+    }
+    if (value is String) {
+      double? parsed = double.tryParse(value);
+      return parsed == null || parsed.isNaN
+          ? 0.0
+          : parsed; // Handle invalid string or NaN
+    }
+    return 0.0; // Default value for unexpected types
+  }
+
   static Future pushPage(
     BuildContext context,
     RouteEnum path, {

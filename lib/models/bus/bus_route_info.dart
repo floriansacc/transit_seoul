@@ -1,3 +1,4 @@
+import 'package:bus_app/controllers/public_method.dart';
 import 'package:bus_app/models/bus/bus_msg_header.dart';
 
 class BusRouteInfo {
@@ -71,55 +72,20 @@ class BusRouteInfoItem {
 
   static BusRouteInfoItem fromJson(Map<String, dynamic> json) {
     return BusRouteInfoItem(
-      busRouteId: json['busRouteId'] is int
-          ? json['busRouteId'] ?? 0
-          : int.parse(json['busRouteId'] ?? '0'),
-      busRouteNm: json['busRouteNm'] is int
-          ? json['busRouteNm'] ?? 0
-          : int.parse(json['busRouteNm'] ?? '0'),
-      busRouteAbrv: json['busRouteAbrv'] is int
-          ? json['busRouteAbrv'] ?? 0
-          : int.parse(json['busRouteAbrv'] ?? '0'),
-      length: json['length'] is int
-          ? ((json['length'] ?? 0) as int).toDouble()
-          : json['length'] is double
-              ? json['length'] ?? 0
-              : double.parse(json['length'] ?? '0'),
-      routeType: json['routeType'] is int
-          ? json['routeType'] ?? 0
-          : int.parse(json['routeType'] ?? '0'),
       stStationNm: json['stStationNm'] ?? '',
       edStationNm: json['edStationNm'] ?? '',
-      term: json['term'] is int
-          ? json['term'] ?? 0
-          : int.parse(json['term'] ?? '0'),
       lastBusYn: json['lastBusYn'] ?? '',
       lastBusTm: json['lastBusTm'] ?? '',
       firstBusTm: json['firstBusTm'] ?? '',
       lastLowTm: json['lastLowTm'] ?? '',
       firstLowTm: json['firstLowTm'] ?? '',
       corpNm: json['corpNm'] ?? '',
-    );
-  }
-
-  static BusRouteInfoItem fromFirestore(Map<String, dynamic> json) {
-    return BusRouteInfoItem(
-      busRouteId: json['busRouteId'] ?? 0,
-      busRouteNm: json['busRouteNm'] ?? 0,
-      busRouteAbrv: json['busRouteAbrv'] ?? 0,
-      length: json['length'] is int
-          ? ((json['length'] ?? 0) as int).toDouble()
-          : json['length'] ?? 0,
-      routeType: json['routeType'] ?? 0,
-      stStationNm: json['stStationNm'] ?? '',
-      edStationNm: json['edStationNm'] ?? '',
-      term: json['term'] ?? 0,
-      lastBusYn: json['lastBusYn'] ?? '',
-      lastBusTm: json['lastBusTm'] ?? '',
-      firstBusTm: json['firstBusTm'] ?? '',
-      lastLowTm: json['lastLowTm'] ?? '',
-      firstLowTm: json['firstLowTm'] ?? '',
-      corpNm: json['corpNm'] ?? '',
+      busRouteId: PublicMethod.parseInt(json['busRouteId']),
+      busRouteNm: PublicMethod.parseInt(json['busRouteNm']),
+      busRouteAbrv: PublicMethod.parseInt(json['busRouteAbrv']),
+      routeType: PublicMethod.parseInt(json['routeType']),
+      term: PublicMethod.parseInt(json['term']),
+      length: PublicMethod.parseDouble(json['length']),
     );
   }
 

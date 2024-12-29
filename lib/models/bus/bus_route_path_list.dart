@@ -1,3 +1,4 @@
+import 'package:bus_app/controllers/public_method.dart';
 import 'package:bus_app/models/bus/bus_msg_header.dart';
 
 class BusRoutePathList {
@@ -47,16 +48,16 @@ class RoutePathListItem {
 
   static List<RoutePathListItem> fromJsonList(List<dynamic> jsonList) {
     // ignore: unnecessary_lambdas
-    return jsonList.map((json) => fromJson(json)).toList();
+    return jsonList.map((json) => RoutePathListItem.fromJson(json)).toList();
   }
 
   static RoutePathListItem fromJson(Map<String, dynamic> json) {
     return RoutePathListItem(
-      no: int.parse(json['no'] ?? '0'),
-      gpsX: double.parse(json['gpsX'] ?? '0'),
-      gpsY: double.parse(json['gpsY'] ?? '0'),
-      posX: double.parse(json['posX'] ?? '0'),
-      posY: double.parse(json['posY'] ?? '0'),
+      no: PublicMethod.parseInt(json['no']),
+      gpsX: PublicMethod.parseDouble(json['gpsX']),
+      gpsY: PublicMethod.parseDouble(json['gpsY']),
+      posX: PublicMethod.parseDouble(json['posX']),
+      posY: PublicMethod.parseDouble(json['posY']),
     );
   }
 
