@@ -14,15 +14,6 @@ class PublicMethod {
     prefs = await SharedPreferences.getInstance();
   }
 
-  static Future goPage(
-    BuildContext context,
-    RouteEnum path, {
-    Object? extra,
-    String? params,
-  }) async {
-    GoRouter.of(context).go(path.path, extra: extra);
-  }
-
   static int parseInt(dynamic value) {
     if (value == null) return 0; // Default value for null
     if (value is int) return value; // Return the int directly
@@ -57,6 +48,15 @@ class PublicMethod {
           : parsed; // Handle invalid string or NaN
     }
     return 0.0; // Default value for unexpected types
+  }
+
+  static Future goPage(
+    BuildContext context,
+    RouteEnum path, {
+    Object? extra,
+    String? params,
+  }) async {
+    GoRouter.of(context).go(path.path, extra: extra);
   }
 
   static Future pushPage(
