@@ -4,19 +4,13 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
     required this.onTap,
-    required this.imageUrl,
-    required this.title,
-    required this.description,
-    this.imageHeight = 180,
-    required this.heroTag,
+    required this.content,
+    this.bgColor,
   });
 
   final VoidCallback onTap;
-  final String imageUrl;
-  final String title;
-  final String description;
-  final double imageHeight;
-  final String heroTag;
+  final Widget content;
+  final Color? bgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +18,12 @@ class CustomCard extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 150),
           clipBehavior: Clip.hardEdge,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: bgColor ?? Theme.of(context).colorScheme.primaryContainer,
             boxShadow: [
               BoxShadow(
                 color: Color.fromARGB(15, 0, 0, 0),
@@ -36,63 +31,12 @@ class CustomCard extends StatelessWidget {
               ),
             ],
           ),
-          child: Column(
-            spacing: 12,
-            children: [
-              Hero(
-                tag: heroTag,
-                child: SizedBox(
-                  height: imageHeight,
-                  width: double.infinity,
-                  child: Image.asset(
-                    imageUrl,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: Column(
-                  spacing: 12,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            description,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          child: SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: content,
+            ),
           ),
         ),
       ),

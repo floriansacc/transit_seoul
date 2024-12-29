@@ -1,5 +1,5 @@
 enum FirebaseCollection {
-  busRouteList('BusRouteList'),
+  busId('BusId'),
   routeInfoItem('RouteInfoItem'),
   routePathList('RoutePathList'),
   stationsByRouteList('StationsByRouteList');

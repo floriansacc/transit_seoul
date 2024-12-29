@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:bus_app/models/bus/bus_id.dart';
 import 'package:bus_app/models/bus/bus_route_info.dart';
 import 'package:bus_app/models/bus/bus_route_path_list.dart';
 import 'package:bus_app/models/bus/bus_station_list.dart';
@@ -19,9 +20,14 @@ class BusInfoCubit extends Cubit<BusInfoState> {
     int busNumber, {
     required bool getDetails,
   }) async {
-    emit(state.copyWith(status: BusInfoStatus.loading));
+    emit(
+      state.copyWith(
+        status: BusInfoStatus.loading,
+        searchNumber: busNumber,
+      ),
+    );
 
-    if (state.busInfo?.busRouteNm == busNumber) {
+    if (state.busId?.busRouteNm == busNumber) {
       debugPrint('bus $busNumber is already in cubit !');
       if (getDetails) {
         await getBusDetails();
@@ -30,13 +36,19 @@ class BusInfoCubit extends Cubit<BusInfoState> {
     }
 
     try {
-      BusRouteInfoItem? busInfo = await _repository.getBusById(busNumber);
+      BusId? busId = await _repository.getBusById(busNumber);
 
-      if (busInfo != null) {
+      if (busId != null) {
+        debugPrint('got bus id of bus $busNumber');
+        BusRouteInfo? busInfo =
+            await _repository.getRouteInfo(busId.busRouteId);
+
         debugPrint('got basic info of bus $busNumber');
+
         emit(
           state.copyWith(
             status: getDetails ? null : BusInfoStatus.success,
+            busId: busId,
             busInfo: busInfo,
           ),
         );
@@ -56,7 +68,7 @@ class BusInfoCubit extends Cubit<BusInfoState> {
   Future<void> getBusDetails() async {
     emit(state.copyWith(status: BusInfoStatus.loading));
 
-    int? busId = state.busInfo?.busRouteId;
+    int? busId = state.busId?.busRouteId;
     if (busId == null) return;
 
     if (state.stationList?.msgBody.itemList

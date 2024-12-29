@@ -1,4 +1,4 @@
-import 'package:bus_app/components/custom_card.dart';
+import 'package:bus_app/components/custom_main_card.dart';
 import 'package:bus_app/controllers/public_method.dart';
 import 'package:bus_app/router/route_enum.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +12,7 @@ class BusPage extends StatelessWidget {
       slivers: [
         SliverList(
           delegate: SliverChildListDelegate([
-            CustomCard(
+            CustomMainCard(
               onTap: () => PublicMethod.pushPage(
                 context,
                 RouteEnum.busInfo,
