@@ -1,3 +1,4 @@
+import 'package:bus_app/components/animated_page_wrapper.dart';
 import 'package:bus_app/router/route_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,22 +7,34 @@ import '../components/app_bar_general.dart';
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
-    required this.child,
+    required this.navigationShell,
+    required this.children,
   });
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
+  final List<Widget> children;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentIndex = 0;
+  late final ScrollController controllerBus;
+
+  @override
+  void initState() {
+    super.initState();
+    controllerBus = ScrollController(keepScrollOffset: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarGeneral(),
-      body: widget.child,
+      body: AnimatedPageWrapperOpacity(
+        currentIndex: widget.navigationShell.currentIndex,
+        children: widget.children,
+      ),
       bottomNavigationBar: NavigationBar(
         destinations: [
           NavigationDestination(
@@ -38,19 +51,28 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         animationDuration: Duration(milliseconds: 300),
         onDestinationSelected: (index) {
-          GoRouter router = GoRouter.of(context);
+          widget.navigationShell.goBranch(
+            index,
+            initialLocation: index == widget.navigationShell.currentIndex,
+          );
+
           if (index == 0) {
-            router.go(RouteEnum.home.path);
-          } else if (index == 1) {
-            router.go(RouteEnum.map.path);
+            GoRouter.of(context)
+                .go(RouteEnum.home.path, extra: {'controller': controllerBus});
+            if (index == widget.navigationShell.currentIndex) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                controllerBus.animateTo(
+                  0,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                );
+              });
+            }
           }
-          // widget.child.goBranch(
-          //   index,
-          //   initialLocation: index == widget.child.currentIndex,
-          // );
-          // setState(() {});
+
+          setState(() {});
         },
-        // selectedIndex: widget.child.currentIndex,
+        selectedIndex: widget.navigationShell.currentIndex,
       ),
     );
   }
