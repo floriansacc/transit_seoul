@@ -4,14 +4,14 @@
       "android": {
         "default": {
           "projectId": "bus-app-66527",
-          "appId": "1:919691691901:android:af66be50beb042a8a72e14",
+          "appId": "1:919691691901:android:59f2693a49a834d6a72e14",
           "fileOutput": "android/app/google-services.json"
         }
       },
       "ios": {
         "default": {
           "projectId": "bus-app-66527",
-          "appId": "1:919691691901:ios:ef961dbd1d55d1caa72e14",
+          "appId": "1:919691691901:ios:e219691779b4ec50a72e14",
           "uploadDebugSymbols": false,
           "fileOutput": "ios/Runner/GoogleService-Info.plist"
         }
@@ -20,8 +20,8 @@
         "lib/firebase_options.dart": {
           "projectId": "bus-app-66527",
           "configurations": {
-            "android": "1:919691691901:android:af66be50beb042a8a72e14",
-            "ios": "1:919691691901:ios:ef961dbd1d55d1caa72e14"
+            "android": "1:919691691901:android:59f2693a49a834d6a72e14",
+            "ios": "1:919691691901:ios:e219691779b4ec50a72e14"
           }
         }
       }

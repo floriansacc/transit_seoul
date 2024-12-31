@@ -1,4 +1,4 @@
-package com.example.bus_app
+package com.transitSeoul
 
 import io.flutter.embedding.android.FlutterActivity
 
