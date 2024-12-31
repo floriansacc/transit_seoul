@@ -13,6 +13,8 @@ GoRouter get router => _router;
 
 final GlobalKey<NavigatorState> navigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey =
+    GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _busNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'busNavigatorKey');
 final GlobalKey<NavigatorState> _mapNavigatorKey =
@@ -22,77 +24,81 @@ final GoRouter _router = GoRouter(
   navigatorKey: navigatorKey,
   initialLocation: RouteEnum.home.path,
   routes: [
-    StatefulShellRoute.indexedStack(
+    ShellRoute(
+      navigatorKey: _shellNavigatorKey,
       // navigatorContainerBuilder: (context, navigationShell, children) {
       //   return HomePage(
       //     navigationShell: navigationShell,
       //     children: children,
       //   );
       // },
-
-      pageBuilder: (
-        BuildContext context,
-        GoRouterState state,
-        StatefulNavigationShell navigationShell,
-      ) {
-        return getPage(
-          state: state,
-          child: HomePage(
-            child: navigationShell,
-          ),
-        );
+      builder: (context, state, child) {
+        return HomePage(child: child);
       },
 
-      branches: [
-        StatefulShellBranch(
-          navigatorKey: _busNavigatorKey,
-          routes: [
-            GoRoute(
-              path: RouteEnum.home.path,
-              pageBuilder: (context, state) {
-                return CustomTransitionPage(
-                  child: BusPage(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    );
-                  },
+      // builder: (
+      //   BuildContext context,
+      //   GoRouterState state,
+      //   StatefulNavigationShell navigationShell,
+      // ) {
+      //   return navigationShell;
+      // },
+      // pageBuilder: (
+      //   BuildContext context,
+      //   GoRouterState state,
+      //   StatefulNavigationShell navigationShell,
+      // ) {
+      //   return getPage(
+      //     state: state,
+      //     child: HomePage(
+      //       child: navigationShell,
+      //     ),
+      //   );
+      // },
+      routes: [
+        GoRoute(
+          parentNavigatorKey: _shellNavigatorKey,
+          path: RouteEnum.home.path,
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              child: BusPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
                 );
               },
-            ),
-          ],
+            );
+          },
         ),
-        StatefulShellBranch(
-          navigatorKey: _mapNavigatorKey,
-          routes: [
-            GoRoute(
-              path: RouteEnum.map.path,
-              pageBuilder: (context, state) {
-                return CustomTransitionPage(
-                  child: MapPage(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    );
-                  },
+        GoRoute(
+          parentNavigatorKey: _shellNavigatorKey,
+          path: RouteEnum.map.path,
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              child: MapPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
                 );
               },
-            ),
-          ],
+            );
+          },
         ),
       ],
     ),
     GoRoute(
+      parentNavigatorKey: navigatorKey,
       path: RouteEnum.settings.path,
       pageBuilder: (context, state) {
         return CupertinoPage(child: SettingsPage());
       },
     ),
     GoRoute(
+      parentNavigatorKey: navigatorKey,
       path: RouteEnum.busInfo.path,
       pageBuilder: (context, state) {
         Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;

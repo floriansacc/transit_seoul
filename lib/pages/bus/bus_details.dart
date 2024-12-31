@@ -2,8 +2,10 @@ import 'package:bus_app/components/animated_dot.dart';
 import 'package:bus_app/components/custom_card.dart';
 import 'package:bus_app/controllers/date_formatter.dart';
 import 'package:bus_app/enums/bus_route_type_enum.dart';
+import 'package:bus_app/enums/color_type.dart';
 import 'package:bus_app/models/bus/bus_route_info.dart';
 import 'package:bus_app/providers/bus_info_cubit/bus_info_cubit.dart';
+import 'package:bus_app/styles/style_text.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,19 +25,8 @@ class _BusDetailsState extends State<BusDetails> {
 
     BusInfoStatus busStatus = busCubit.state.status;
 
-    final TextStyle? defaultTitleStyle =
-        Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            );
-
     final TextStyle? errorTitleStyle =
-        Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onErrorContainer,
-            );
-    final TextStyle? errorBodyStyle =
-        Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onErrorContainer,
-            );
+        StyleText.titleMedium(context, colorType: ColorType.error);
 
     return Column(
       children: [
@@ -79,18 +70,19 @@ class _BusDetailsState extends State<BusDetails> {
                       ),
                 Text(
                   '다시 시도하거나 다른 버스를 조회해보세요.',
-                  style: errorBodyStyle,
+                  style:
+                      StyleText.bodyMedium(context, colorType: ColorType.error),
                 ),
               ] else if (busStatus.isInitial) ...[
                 Text(
                   '버스 조회하세요',
-                  style: defaultTitleStyle,
+                  style: StyleText.titleMedium(context),
                   textAlign: TextAlign.center,
                 ),
               ] else if (busStatus.isLoading) ...[
                 Text(
                   '검색중',
-                  style: defaultTitleStyle,
+                  style: StyleText.titleMedium(context),
                 ),
                 AnimatedDot(),
               ] else if (busStatus.isSuccess) ...[
@@ -106,55 +98,43 @@ class _BusDetailsState extends State<BusDetails> {
   Widget successBody(BuildContext context, BusInfoCubit busCubit) {
     BusRouteInfoItem? busInfo = busCubit.state.busInfo?.msgBody.itemList.first;
 
-    final TextStyle? headlineStyle =
-        Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            );
+    final TextStyle? headlineStyle = StyleText.headlineSmall(context);
 
-    final TextStyle? bodyLargeStyle =
-        Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            );
-    final TextStyle? bodyStyle =
-        Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-            );
-    final TextStyle? bodyBoldStyle =
-        Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.w700,
-            );
+    final TextStyle? bodyStyle = StyleText.bodyMedium(context);
 
-    final TextStyle? errorBodyStyle =
-        Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.error,
-              fontWeight: FontWeight.w700,
-            );
+    final TextStyle? errorBodyStyle = StyleText.bodyMedium(
+      context,
+      fontWeight: FontWeight.w700,
+      colorType: ColorType.error,
+    );
 
+    DateTime? firstBusTime = DateFormatter.toDate(busInfo?.firstBusTm);
     DateTime? lastBusTime = DateFormatter.toDate(busInfo?.lastBusTm);
 
     BusRouteTypeEnum? routeType = BusRouteTypeEnum.values
         .firstWhereOrNull((e) => e.code == busInfo?.routeType);
 
     Widget lastBusInfo() {
+      DateTime now = DateTime.now();
+
+      if (lastBusTime == null || firstBusTime == null) {
+        return SizedBox();
+      }
+
       if (busInfo?.lastBusYn == 'Y') {
         return Text(
           '막차 운행중',
           style: errorBodyStyle,
         );
       }
-      if (lastBusTime == null) {
-        return SizedBox();
-      }
-      if (DateTime.now().isAfter(lastBusTime)) {
+
+      if (now.isAfter(lastBusTime) || now.isBefore(firstBusTime)) {
         return Text(
           '운행 종료',
           style: errorBodyStyle,
         );
-      } else if (DateTime.now()
-              .subtract(Duration(hours: 1))
-              .isBefore(lastBusTime) &&
-          DateTime.now().isBefore(lastBusTime)) {
+      } else if (now.difference(lastBusTime).inMinutes.abs() < 60 &&
+          now.isBefore(lastBusTime)) {
         return Text(
           '곧 운행 종료',
           style: errorBodyStyle,
@@ -186,7 +166,7 @@ class _BusDetailsState extends State<BusDetails> {
           children: [
             Text(
               '${busInfo?.busRouteNm}',
-              style: bodyLargeStyle,
+              style: StyleText.bodyLarge(context),
             ),
             DecoratedBox(
               decoration: BoxDecoration(
@@ -197,9 +177,16 @@ class _BusDetailsState extends State<BusDetails> {
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                 child: Text(
                   '${routeType?.description}',
-                  style: bodyBoldStyle,
+                  style: StyleText.bodyMedium(
+                    context,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
+            ),
+            Text(
+              '(${busInfo?.length}km)',
+              style: bodyStyle,
             ),
           ],
         ),
@@ -208,13 +195,18 @@ class _BusDetailsState extends State<BusDetails> {
           '배차간격: ${busInfo?.term}분',
           style: bodyStyle,
         ),
+        if (firstBusTime != null)
+          Text(
+            '첫차 시간: ${firstBusTime.hour}시${firstBusTime.minute != 0 ? ' ${firstBusTime.minute}분' : ''}',
+            style: bodyStyle,
+          ),
         if (lastBusTime != null)
           Row(
             spacing: 8,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                '막차 시간: ${lastBusTime.hour}시',
+                '막차 시간: ${lastBusTime.hour}시${lastBusTime.minute != 0 ? ' ${lastBusTime.minute}분' : ''}',
                 style: bodyStyle,
               ),
               lastBusInfo(),

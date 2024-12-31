@@ -1,11 +1,14 @@
 import 'package:bus_app/components/confirm_button.dart';
 import 'package:bus_app/components/custom_text_form_field.dart';
+import 'package:bus_app/components/map_component.dart';
 import 'package:bus_app/controllers/public_method.dart';
 import 'package:bus_app/pages/bus/bus_details.dart';
 import 'package:bus_app/providers/bus_info_cubit/bus_info_cubit.dart';
+import 'package:bus_app/styles/style_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 
 class BusInfoPage extends StatefulWidget {
   const BusInfoPage({
@@ -29,7 +32,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
     if (_formKey.currentState!.validate()) {
       await context.read<BusInfoCubit>().getBusRouteInfo(
             int.parse(searchController.value.text),
-            getDetails: true,
+            getDetails: false,
           );
     }
     if (!mounted) throw Exception();
@@ -44,9 +47,9 @@ class _BusInfoPageState extends State<BusInfoPage> {
   Widget build(BuildContext context) {
     BusInfoCubit busCubit = context.watch<BusInfoCubit>();
 
-    print(busCubit.state.busId?.toJson());
+    // print(busCubit.state.busId?.toJson());
     print(busCubit.state.busInfo?.msgBody.itemList.first.toJson());
-    print(busCubit.state.routePath?.msgBody.itemList.first.toJson());
+    // print(busCubit.state.routePath?.msgBody.itemList.first.toJson());
     print(busCubit.state.stationList?.msgBody.itemList.first.toJson());
 
     return Stack(
@@ -57,7 +60,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
             appBar: AppBar(
               title: Text(
                 'Bus Info',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: StyleText.bodyLarge(context),
               ),
             ),
             body: SingleChildScrollView(
@@ -70,6 +73,8 @@ class _BusInfoPageState extends State<BusInfoPage> {
                   ),
                   fieldRow(),
                   BusDetails(),
+                  MapComponent(),
+                  Gap(100),
                 ],
               ),
             ),

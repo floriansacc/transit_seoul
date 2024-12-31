@@ -1,3 +1,4 @@
+import 'package:bus_app/router/route_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../components/app_bar_general.dart';
@@ -8,13 +9,14 @@ class HomePage extends StatefulWidget {
     required this.child,
   });
 
-  final StatefulNavigationShell child;
+  final Widget child;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,13 +38,19 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         animationDuration: Duration(milliseconds: 300),
         onDestinationSelected: (index) {
-          widget.child.goBranch(
-            index,
-            initialLocation: index == widget.child.currentIndex,
-          );
-          setState(() {});
+          GoRouter router = GoRouter.of(context);
+          if (index == 0) {
+            router.go(RouteEnum.home.path);
+          } else if (index == 1) {
+            router.go(RouteEnum.map.path);
+          }
+          // widget.child.goBranch(
+          //   index,
+          //   initialLocation: index == widget.child.currentIndex,
+          // );
+          // setState(() {});
         },
-        selectedIndex: widget.child.currentIndex,
+        // selectedIndex: widget.child.currentIndex,
       ),
     );
   }

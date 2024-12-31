@@ -24,6 +24,42 @@ class BusPage extends StatelessWidget {
               description:
                   '버스 노선을 조회하고 실시간 정보를 확인하는 서비스입니다. 자주 이용하시는 노선을 확인하러 갈까요?',
             ),
+            CustomMainCard(
+              onTap: () => PublicMethod.pushPage(
+                context,
+                RouteEnum.busInfo,
+                extra: {'heroTag': 'test_1'},
+              ),
+              imageUrl: 'assets/images/test_1.avif',
+              heroTag: 'test_1',
+              title: '노선 정보 조회하기',
+              description:
+                  '버스 노선을 조회하고 실시간 정보를 확인하는 서비스입니다. 자주 이용하시는 노선을 확인하러 갈까요?',
+            ),
+            CustomMainCard(
+              onTap: () => PublicMethod.pushPage(
+                context,
+                RouteEnum.busInfo,
+                extra: {'heroTag': 'test_1'},
+              ),
+              imageUrl: 'assets/images/test_1.avif',
+              heroTag: 'test_1',
+              title: '노선 정보 조회하기',
+              description:
+                  '버스 노선을 조회하고 실시간 정보를 확인하는 서비스입니다. 자주 이용하시는 노선을 확인하러 갈까요?',
+            ),
+            CustomMainCard(
+              onTap: () => PublicMethod.pushPage(
+                context,
+                RouteEnum.busInfo,
+                extra: {'heroTag': 'test_1'},
+              ),
+              imageUrl: 'assets/images/test_1.avif',
+              heroTag: 'test_1',
+              title: '노선 정보 조회하기',
+              description:
+                  '버스 노선을 조회하고 실시간 정보를 확인하는 서비스입니다. 자주 이용하시는 노선을 확인하러 갈까요?',
+            ),
           ]),
         ),
       ],
