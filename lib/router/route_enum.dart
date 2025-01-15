@@ -1,5 +1,6 @@
 enum RouteEnum {
   home('/home'),
+  metro('/metro'),
   map('/map'),
 
   busInfo('/bus-info'),

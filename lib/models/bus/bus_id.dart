@@ -1,4 +1,4 @@
-import 'package:bus_app/controllers/public_method.dart';
+import 'package:transit_seoul/controllers/public_method.dart';
 
 class BusId {
   const BusId({

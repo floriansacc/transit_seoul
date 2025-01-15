@@ -1,5 +1,5 @@
-import 'package:bus_app/components/animated_page_wrapper.dart';
-import 'package:bus_app/router/route_enum.dart';
+import 'package:transit_seoul/components/animated_page_wrapper.dart';
+import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../components/app_bar_general.dart';
@@ -41,6 +41,11 @@ class _HomePageState extends State<HomePage> {
             selectedIcon: Icon(Icons.home),
             icon: Icon(Icons.home_outlined),
             label: 'Bus',
+          ),
+          NavigationDestination(
+            selectedIcon: Icon(Icons.subway),
+            icon: Icon(Icons.subway_outlined),
+            label: 'Metro',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.map),

@@ -1,8 +1,9 @@
-import 'package:bus_app/pages/bus/bus_info_page.dart';
-import 'package:bus_app/pages/bus/bus_page.dart';
-import 'package:bus_app/pages/map/map_page.dart';
-import 'package:bus_app/pages/settings/settings_page.dart';
-import 'package:bus_app/router/route_enum.dart';
+import 'package:transit_seoul/pages/bus/bus_info_page.dart';
+import 'package:transit_seoul/pages/bus/bus_page.dart';
+import 'package:transit_seoul/pages/map/map_page.dart';
+import 'package:transit_seoul/pages/metro/metro_page.dart';
+import 'package:transit_seoul/pages/settings/settings_page.dart';
+import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,8 @@ final GlobalKey<NavigatorState> navigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _busNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'busNavigatorKey');
+final GlobalKey<NavigatorState> _metroNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'metroNavigatorKey');
 final GlobalKey<NavigatorState> _mapNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'mapNavigatorKey');
 
@@ -64,6 +67,26 @@ final GoRouter _router = GoRouter(
                   child: BusPage(
                     controller: extra?['controller'],
                   ),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: _metroNavigatorKey,
+          routes: [
+            GoRoute(
+              path: RouteEnum.metro.path,
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  child: MetroPage(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(

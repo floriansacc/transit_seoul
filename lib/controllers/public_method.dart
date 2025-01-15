@@ -1,10 +1,12 @@
 import 'dart:io';
 
-import 'package:bus_app/router/route_enum.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transit_seoul/router/router.dart';
 
 late SharedPreferences prefs;
 
@@ -59,13 +61,65 @@ class PublicMethod {
     GoRouter.of(context).go(path.path, extra: extra);
   }
 
-  static Future pushPage(
+  static Future<void> pushPage(
     BuildContext context,
     RouteEnum path, {
     Object? extra,
     String? params,
   }) async {
     GoRouter.of(context).push(path.path, extra: extra);
+  }
+
+  static void toast(
+    BuildContext? context,
+    String text, {
+    double bottomPosition = 100,
+    String svgIcon = '',
+    double iconSize = 20,
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    final FToast fToast = FToast();
+    fToast.removeCustomToast();
+    fToast.init(context ?? navigatorKey.currentContext!);
+    Widget toast = Container(
+      width:
+          MediaQuery.sizeOf(context ?? navigatorKey.currentContext!).width - 32,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        color: Theme.of(context ?? navigatorKey.currentContext!)
+            .colorScheme
+            .primaryContainer,
+      ),
+      child: Row(
+        spacing: 8,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+            child: Text(
+              text,
+              softWrap: true,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    fToast.showToast(
+      child: toast,
+      toastDuration: duration,
+      positionedToastBuilder: (context, child, gravity) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              bottom: bottomPosition,
+              child: child,
+            ),
+          ],
+        );
+      },
+    );
   }
 
   static Widget nextButtonIosKeyboard(

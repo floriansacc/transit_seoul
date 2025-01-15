@@ -1,5 +1,5 @@
-import 'package:bus_app/enums/theme_enum.dart';
-import 'package:bus_app/providers/settings_cubit/settings_cubit.dart';
+import 'package:transit_seoul/enums/theme_enum.dart';
+import 'package:transit_seoul/providers/settings_cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

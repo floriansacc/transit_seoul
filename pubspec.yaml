@@ -1,4 +1,4 @@
-name: bus_app
+name: transit_seoul
 description: "A new Flutter project."
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
@@ -38,6 +38,7 @@ dependencies:
   intl: ^0.20.1
   kakao_map_plugin: ^0.3.2
   geolocator: ^13.0.2
+  fluttertoast: ^8.2.10
 
 dev_dependencies:
   flutter_test:

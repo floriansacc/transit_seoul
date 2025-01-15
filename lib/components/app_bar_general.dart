@@ -1,5 +1,5 @@
-import 'package:bus_app/controllers/public_method.dart';
-import 'package:bus_app/router/route_enum.dart';
+import 'package:transit_seoul/controllers/public_method.dart';
+import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/material.dart';
 
 class AppBarGeneral extends StatefulWidget implements PreferredSizeWidget {

@@ -1,8 +1,8 @@
-import 'package:bus_app/controllers/public_method.dart';
-import 'package:bus_app/enums/theme_enum.dart';
-import 'package:bus_app/firebase_options.dart';
-import 'package:bus_app/providers/init_bloc_provider.dart';
-import 'package:bus_app/providers/settings_cubit/settings_cubit.dart';
+import 'package:transit_seoul/controllers/public_method.dart';
+import 'package:transit_seoul/enums/theme_enum.dart';
+import 'package:transit_seoul/firebase_options.dart';
+import 'package:transit_seoul/providers/init_bloc_provider.dart';
+import 'package:transit_seoul/providers/settings_cubit/settings_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,5 +1,5 @@
-import 'package:bus_app/controllers/public_method.dart';
-import 'package:bus_app/models/bus/bus_msg_header.dart';
+import 'package:transit_seoul/controllers/public_method.dart';
+import 'package:transit_seoul/models/bus/bus_msg_header.dart';
 
 class BusStationList {
   const BusStationList({

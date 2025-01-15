@@ -1,4 +1,4 @@
-# bus_app
+# transit_seoul
 
 A new Flutter project.
 

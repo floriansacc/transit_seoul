@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
-import 'package:bus_app/models/bus/bus_id.dart';
-import 'package:bus_app/models/bus/bus_route_info.dart';
-import 'package:bus_app/models/bus/bus_route_path_list.dart';
-import 'package:bus_app/models/bus/bus_station_list.dart';
-import 'package:bus_app/services/bus_service.dart';
-import 'package:bus_app/styles/logger.dart';
+import 'package:transit_seoul/models/bus/bus_id.dart';
+import 'package:transit_seoul/models/bus/bus_route_info.dart';
+import 'package:transit_seoul/models/bus/bus_route_path_list.dart';
+import 'package:transit_seoul/models/bus/bus_station_list.dart';
+import 'package:transit_seoul/services/bus_service.dart';
+import 'package:transit_seoul/styles/logger.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

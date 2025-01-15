@@ -1,7 +1,7 @@
 // import 'package:bloc/bloc.dart';
-// import 'package:bus_app/models/bus/bus_route_info.dart';
-// import 'package:bus_app/services/bus_service.dart';
-// import 'package:bus_app/styles/logger.dart';
+// import 'package:transit_seoul/models/bus/bus_route_info.dart';
+// import 'package:transit_seoul/services/bus_service.dart';
+// import 'package:transit_seoul/styles/logger.dart';
 // import 'package:equatable/equatable.dart';
 
 // part 'bus_select_state.dart';

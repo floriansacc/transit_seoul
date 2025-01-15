@@ -1,4 +1,4 @@
-import 'package:bus_app/enums/color_type.dart';
+import 'package:transit_seoul/enums/color_type.dart';
 import 'package:flutter/material.dart';
 
 class StyleText {
