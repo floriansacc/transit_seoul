@@ -51,29 +51,41 @@ class _MapPageState extends State<MapPage> {
     setState(() {});
   }
 
-  Future<void> searchAddress() async {
+  Future<void> searchFunction() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    AddressSearchRequest address = AddressSearchRequest(
-      addr: controller.text,
-      analyzeType: AnalyzeType.similar,
-    );
-    AddressSearchResponse response = await mapController.addressSearch(address);
-
-    if (response.list.isEmpty) {
-      if (mounted) {
-        PublicMethod.toast(context, 'No result');
-      }
-      //TODO keyword search
-      return;
-    }
-
-    markers.clear();
+    AddressSearchResponse? addressSearch;
+    KeywordSearchResponse? keyworkdSearch;
 
     List<LatLng> listLatLng = [];
-    for (final SearchAddress item in response.list) {
+
+    addressSearch = await getAddressSearch();
+
+    if (addressSearch.list.isEmpty) {
+      debugPrint('No result by address, search by keyword');
+      keyworkdSearch = await getKeywordSearch();
+      for (final KeywordAddress item in keyworkdSearch.list) {
+        LatLng point = LatLng(
+          double.parse(item.y ?? ''),
+          double.parse(item.x ?? ''),
+        );
+
+        listLatLng.add(point);
+        markers.add(
+          Marker(
+            markerId: controller.text,
+            latLng: point,
+            infoWindowContent: item.placeName!,
+            infoWindowFirstShow: true,
+          ),
+        );
+        if ((item.placeName ?? '').contains(controller.text)) break;
+      }
+    }
+
+    for (final SearchAddress item in addressSearch.list) {
       LatLng point = LatLng(
         double.parse(item.y ?? ''),
         double.parse(item.x ?? ''),
@@ -90,8 +102,31 @@ class _MapPageState extends State<MapPage> {
       );
     }
 
+    markers.clear();
+
     setState(() {});
     await mapController.fitBounds(listLatLng);
+  }
+
+  Future<AddressSearchResponse> getAddressSearch() async {
+    AddressSearchRequest address = AddressSearchRequest(
+      addr: controller.text,
+      analyzeType: AnalyzeType.similar,
+    );
+    AddressSearchResponse response = await mapController.addressSearch(address);
+
+    return response;
+  }
+
+  Future<KeywordSearchResponse> getKeywordSearch() async {
+    KeywordSearchRequest keyword = KeywordSearchRequest(
+      keyword: controller.text,
+      page: 1,
+      sort: SortBy.accuracy,
+    );
+    KeywordSearchResponse response = await mapController.keywordSearch(keyword);
+
+    return response;
   }
 
   @override
@@ -115,7 +150,7 @@ class _MapPageState extends State<MapPage> {
                         hintText: '주소 검색',
                         textInputAction: TextInputAction.done,
                       ),
-                      onTapSearch: () async => searchAddress(),
+                      onTapSearch: () async => searchFunction(),
                     ),
                   ),
                 ),
