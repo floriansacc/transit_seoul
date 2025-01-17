@@ -40,42 +40,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AppThemeWrapper extends StatefulWidget {
+class AppThemeWrapper extends StatelessWidget {
   const AppThemeWrapper({super.key});
-
-  @override
-  State<AppThemeWrapper> createState() => _AppThemeWrapperState();
-}
-
-class _AppThemeWrapperState extends State<AppThemeWrapper>
-    with WidgetsBindingObserver {
-  ValueNotifier<Brightness> brightness = ValueNotifier(Brightness.dark);
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      brightness.value = View.of(context).platformDispatcher.platformBrightness;
-    });
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.resumed) {
-      if (context.read<SettingsCubit>().state.isDarkTheme == ThemeEnum.system) {
-        brightness.value =
-            View.of(context).platformDispatcher.platformBrightness;
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,21 +52,16 @@ class _AppThemeWrapperState extends State<AppThemeWrapper>
 
     AppTheme appTheme = AppTheme(textTheme);
 
-    return ValueListenableBuilder(
-      valueListenable: brightness,
-      builder: (context, brightnessValue, child) {
-        return MaterialApp.router(
-          routerConfig: router,
-          title: 'Transit Seoul',
-          debugShowCheckedModeBanner: false,
-          theme: switch (activeTheme) {
-            ThemeEnum.dark => appTheme.dark(),
-            ThemeEnum.light => appTheme.light(),
-            ThemeEnum.system => brightnessValue == Brightness.dark
-                ? appTheme.dark()
-                : appTheme.light(),
-          },
-        );
+    return MaterialApp.router(
+      routerConfig: router,
+      title: 'Transit Seoul',
+      debugShowCheckedModeBanner: false,
+      darkTheme: appTheme.dark(),
+      theme: appTheme.light(),
+      themeMode: switch (activeTheme) {
+        ThemeEnum.dark => ThemeMode.dark,
+        ThemeEnum.light => ThemeMode.system,
+        ThemeEnum.system => ThemeMode.system,
       },
     );
   }

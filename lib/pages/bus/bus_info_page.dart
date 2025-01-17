@@ -1,7 +1,8 @@
 import 'package:transit_seoul/components/custom_search_bar.dart';
 import 'package:transit_seoul/components/custom_text_form_field.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
-import 'package:transit_seoul/pages/bus/bus_details.dart';
+import 'package:transit_seoul/pages/bus/components/bus_details.dart';
+import 'package:transit_seoul/pages/bus/components/bus_map.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/styles/style_text.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +28,19 @@ class _BusInfoPageState extends State<BusInfoPage> {
   TextEditingController searchController = TextEditingController();
   FocusNode searchFocusNode = FocusNode();
 
+  final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
+
   Future<void> validateSearch() async {
+    shouldDrawLine.value = false;
+    BusInfoCubit busCubit = context.read<BusInfoCubit>();
     if (_formKey.currentState!.validate()) {
-      await context.read<BusInfoCubit>().getBusRouteInfo(
-            int.parse(searchController.value.text),
-            getDetails: false,
-          );
+      await busCubit.getBusRouteInfo(
+        int.parse(searchController.value.text),
+        getDetails: true,
+      );
+      if (busCubit.state.status.isSuccess) {
+        shouldDrawLine.value = true;
+      }
     }
     if (!mounted) throw Exception();
 
@@ -72,7 +80,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
                   ),
                   fieldRow(),
                   BusDetails(),
-                  // MapComponent(),
+                  BusMap(shouldDrawLine: shouldDrawLine),
                   Gap(100),
                 ],
               ),
