@@ -8,15 +8,19 @@ class BusMap extends StatefulWidget {
   const BusMap({
     super.key,
     required this.shouldDrawLine,
+    required this.isMapFullScreen,
   });
 
-  final ValueNotifier shouldDrawLine;
+  final ValueNotifier<bool> shouldDrawLine;
+  final ValueNotifier<bool> isMapFullScreen;
 
   @override
   State<BusMap> createState() => _BusMapState();
 }
 
 class _BusMapState extends State<BusMap> {
+  final Key _mapKey = GlobalKey();
+
   late KakaoMapController mapController;
 
   final List<Polyline> polylines = [];
@@ -30,6 +34,10 @@ class _BusMapState extends State<BusMap> {
         await drawBusLine();
       }
     });
+    widget.isMapFullScreen.addListener(() async {
+      await Future.delayed(Duration(milliseconds: 100));
+      await getMapOnBusLine();
+    });
   }
 
   @override
@@ -38,26 +46,8 @@ class _BusMapState extends State<BusMap> {
     super.dispose();
   }
 
-  Future<void> drawBusLine() async {
-    BusInfoCubit busCubit = context.read<BusInfoCubit>();
-
-    List<RoutePathListItem> routePath =
-        busCubit.state.routePath?.msgBody.itemList ?? [];
-
-    for (final e in routePath) {
-      polylines.add(
-        Polyline(
-          strokeWidth: 3,
-          strokeColor: Colors.black,
-          strokeOpacity: 0.6,
-          strokeStyle: StrokeStyle.solid,
-          polylineId: '${e.no}',
-          points: [
-            LatLng(e.gpsY, e.gpsX),
-          ],
-        ),
-      );
-    }
+  Future<void> getMapOnBusLine() async {
+    if (polylines.isEmpty) return;
 
     double minLat = double.infinity;
     double minLng = double.infinity;
@@ -88,66 +78,107 @@ class _BusMapState extends State<BusMap> {
     ]);
   }
 
+  Future<void> drawBusLine() async {
+    List<RoutePathListItem> routePath =
+        context.read<BusInfoCubit>().state.routePath?.msgBody.itemList ?? [];
+
+    for (final e in routePath) {
+      polylines.add(
+        Polyline(
+          strokeWidth: 3,
+          strokeColor: Colors.black,
+          strokeOpacity: 0.6,
+          strokeStyle: StrokeStyle.solid,
+          polylineId: '${e.no}',
+          points: [
+            LatLng(e.gpsY, e.gpsX),
+          ],
+        ),
+      );
+    }
+    await getMapOnBusLine();
+  }
+
   @override
   Widget build(BuildContext context) {
     // BusInfoCubit busCubit = context.watch<BusInfoCubit>();
 
     return Container(
       clipBehavior: Clip.hardEdge,
-      width: (MediaQuery.of(context).size.width / 1.5) + 2,
-      height: (MediaQuery.of(context).size.width / 1.5) + 2,
+      width: widget.isMapFullScreen.value
+          ? MediaQuery.of(context).size.width
+          : (MediaQuery.of(context).size.width / 1.5) + 2,
+      height: widget.isMapFullScreen.value
+          ? MediaQuery.of(context).size.height - 200
+          : (MediaQuery.of(context).size.width / 1.5) + 2,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         border: Border.all(width: 2, color: Colors.black),
       ),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-        ),
-        child: KakaoMap(
-          polylines: polylines,
-          onMapCreated: (controller) {
-            mapController = controller;
-
-            setState(() {});
-          },
-          onMapTap: (latLng) {
-            // print(latLng);
-            // polylines.add(
-            //   Polyline(
-            //     polylineId: 'clickLine',
-            //     points: [latLng],
-            //     strokeWidth: 3,
-            //     strokeColor: const Color(0xffdb4040),
-            //     strokeOpacity: 1,
-            //     strokeStyle: StrokeStyle.solid,
-            //   ),
-            // );
-
-            // if (routePath.isNotEmpty) {
-            //   for (final e in routePath) {
-            //     polylines.add(
-            //       Polyline(
-            //         strokeWidth: 3,
-            //         strokeColor: Colors.black,
-            //         strokeOpacity: 0.6,
-            //         strokeStyle: StrokeStyle.solid,
-            //         polylineId: '${e.no}',
-            //         points: [
-            //           LatLng(e.gpsY, e.gpsX),
-            //         ],
-            //       ),
-            //     );
-            //   }
-            // }
-            // setState(() {});
-          },
-          center: LatLng(
-            37.526126,
-            126.922255,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: kakaoMap(context),
+            ),
           ),
-        ),
+          Positioned(
+            bottom: widget.isMapFullScreen.value ? null : 0,
+            right: 0,
+            top: widget.isMapFullScreen.value ? 0 : null,
+            child: GestureDetector(
+              onTap: () =>
+                  widget.isMapFullScreen.value = !widget.isMapFullScreen.value,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: widget.isMapFullScreen.value
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Icon(
+                    widget.isMapFullScreen.value
+                        ? Icons.fullscreen_exit
+                        : Icons.fullscreen,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  KakaoMap kakaoMap(BuildContext context) {
+    return KakaoMap(
+      key: _mapKey,
+      mapTypeControl: true,
+      polylines: polylines,
+      onMapCreated: (controller) {
+        mapController = controller;
+
+        setState(() {});
+
+        List<RoutePathListItem> routePath =
+            context.read<BusInfoCubit>().state.routePath?.msgBody.itemList ??
+                [];
+
+        if (routePath.isNotEmpty) {
+          drawBusLine();
+        }
+      },
+      onMapTap: (latLng) {},
+      center: LatLng(
+        37.526126,
+        126.922255,
       ),
     );
   }

@@ -29,6 +29,14 @@ class _BusInfoPageState extends State<BusInfoPage> {
   FocusNode searchFocusNode = FocusNode();
 
   final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isMapFullScreen = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    shouldDrawLine.dispose();
+    isMapFullScreen.dispose();
+    super.dispose();
+  }
 
   Future<void> validateSearch() async {
     shouldDrawLine.value = false;
@@ -70,19 +78,27 @@ class _BusInfoPageState extends State<BusInfoPage> {
                 style: StyleText.bodyLarge(context),
               ),
             ),
-            body: SingleChildScrollView(
-              child: Column(
-                spacing: 20,
-                children: [
-                  Hero(
-                    tag: widget.heroTag ?? '',
-                    child: Image.asset('assets/images/test_1.avif'),
-                  ),
-                  fieldRow(),
-                  BusDetails(),
-                  BusMap(shouldDrawLine: shouldDrawLine),
-                  Gap(100),
-                ],
+            body: ValueListenableBuilder(
+              valueListenable: isMapFullScreen,
+              builder: (context, isFullScreen, child) => SingleChildScrollView(
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    if (!isFullScreen) ...[
+                      Hero(
+                        tag: widget.heroTag ?? '',
+                        child: Image.asset('assets/images/test_1.avif'),
+                      ),
+                      fieldRow(),
+                      BusDetails(),
+                    ],
+                    BusMap(
+                      shouldDrawLine: shouldDrawLine,
+                      isMapFullScreen: isMapFullScreen,
+                    ),
+                    Gap(isFullScreen ? 0 : 100),
+                  ],
+                ),
               ),
             ),
           ),
