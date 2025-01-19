@@ -7,7 +7,7 @@ import 'package:provider/single_child_widget.dart';
 class InitBlocProvider {
   static List<SingleChildWidget> blocProvider() {
     return [
-      BlocProvider(create: (context) => SettingsCubit()..initializeTheme()),
+      BlocProvider(create: (context) => SettingsCubit()..initializeSettings()),
       BlocProvider(
         create: (context) => BusInfoCubit(BusService()),
       ),

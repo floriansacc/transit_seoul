@@ -60,7 +60,7 @@ class AppThemeWrapper extends StatelessWidget {
       theme: appTheme.light(),
       themeMode: switch (activeTheme) {
         ThemeEnum.dark => ThemeMode.dark,
-        ThemeEnum.light => ThemeMode.system,
+        ThemeEnum.light => ThemeMode.light,
         ThemeEnum.system => ThemeMode.system,
       },
     );

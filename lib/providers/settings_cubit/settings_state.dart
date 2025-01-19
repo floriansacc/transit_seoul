@@ -13,21 +13,25 @@ class SettingsState extends Equatable {
   const SettingsState({
     this.status = SettingsStatus.initial,
     this.isDarkTheme = ThemeEnum.light,
+    this.isMapControl = false,
   });
 
   final SettingsStatus status;
   final ThemeEnum isDarkTheme;
+  final bool isMapControl;
 
   SettingsState copyWith({
     SettingsStatus? status,
     ThemeEnum? isDarkTheme,
+    bool? isMapControl,
   }) {
     return SettingsState(
       status: status ?? this.status,
       isDarkTheme: isDarkTheme ?? this.isDarkTheme,
+      isMapControl: isMapControl ?? this.isMapControl,
     );
   }
 
   @override
-  List<Object?> get props => [status, isDarkTheme];
+  List<Object?> get props => [status, isDarkTheme, isMapControl];
 }

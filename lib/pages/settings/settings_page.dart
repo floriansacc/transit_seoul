@@ -1,3 +1,4 @@
+import 'package:gap/gap.dart';
 import 'package:transit_seoul/enums/theme_enum.dart';
 import 'package:transit_seoul/providers/settings_cubit/settings_cubit.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SettingsCubit settingsCubit = context.watch<SettingsCubit>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -17,22 +20,26 @@ class SettingsPage extends StatelessWidget {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 8),
-                child: themeSettings(context),
-              ),
-            ]),
+          SliverPadding(
+            padding: const EdgeInsets.only(left: 16, right: 8),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                themeSettings(context, settingsCubit),
+                Gap(12),
+                mapControl(context, settingsCubit),
+              ]),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget themeSettings(BuildContext context) {
-    final ThemeEnum activeTheme =
-        context.watch<SettingsCubit>().state.isDarkTheme;
+  Widget themeSettings(
+    BuildContext context,
+    SettingsCubit settingsCubit,
+  ) {
+    final ThemeEnum activeTheme = settingsCubit.state.isDarkTheme;
 
     return Column(
       spacing: 12,
@@ -70,6 +77,37 @@ class SettingsPage extends StatelessWidget {
             ],
           ),
         ],
+      ],
+    );
+  }
+
+  Widget mapControl(
+    BuildContext context,
+    SettingsCubit settingsCubit,
+  ) {
+    final bool isMapControl = settingsCubit.state.isMapControl;
+
+    return Row(
+      children: [
+        Text('지도 제어 도구 활성화'),
+        Spacer(),
+        SegmentedButton(
+          showSelectedIcon: false,
+          segments: [
+            ButtonSegment(
+              value: false,
+              label: Text('끄기'),
+            ),
+            ButtonSegment(
+              value: true,
+              label: Text('켜기'),
+            ),
+          ],
+          selected: {isMapControl},
+          onSelectionChanged: (Set<bool> value) {
+            context.read<SettingsCubit>().switchMapControl(entry: value.first);
+          },
+        ),
       ],
     );
   }
