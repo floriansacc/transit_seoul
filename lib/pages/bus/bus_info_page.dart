@@ -1,3 +1,4 @@
+import 'package:transit_seoul/components/confirm_button.dart';
 import 'package:transit_seoul/components/custom_search_bar.dart';
 import 'package:transit_seoul/components/custom_text_form_field.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
@@ -24,17 +25,36 @@ class BusInfoPage extends StatefulWidget {
 
 class _BusInfoPageState extends State<BusInfoPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final ScrollController scrollController = ScrollController();
 
   TextEditingController searchController = TextEditingController();
   FocusNode searchFocusNode = FocusNode();
+
+  final ValueNotifier<bool> displayActions = ValueNotifier<bool>(false);
 
   final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isMapFullScreen = ValueNotifier<bool>(false);
 
   @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if (scrollController.offset >= 56 && !displayActions.value) {
+        displayActions.value = true;
+      } else if (scrollController.offset < 56 && displayActions.value) {
+        displayActions.value = false;
+      }
+    });
+  }
+
+  @override
   void dispose() {
     shouldDrawLine.dispose();
     isMapFullScreen.dispose();
+    displayActions.dispose();
+    searchFocusNode.dispose();
+    scrollController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -54,50 +74,94 @@ class _BusInfoPageState extends State<BusInfoPage> {
 
     if (context.read<BusInfoCubit>().state.busInfo != null) {
       searchController.clear();
-      FocusScope.of(context).unfocus();
+      FocusManager.instance.primaryFocus?.unfocus();
     }
+  }
+
+  void openSearchModal() {
+    PublicMethod.dialog(
+      context,
+      isDismis: false,
+      Column(
+        spacing: 12,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          fieldRow(),
+          ConfirmButton(
+            description: '닫기',
+            onTap: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     BusInfoCubit busCubit = context.watch<BusInfoCubit>();
 
-    // print(busCubit.state.busId?.toJson());
-    print(busCubit.state.busInfo?.msgBody.itemList.first.toJson());
+    print(busCubit.state.busId?.toJson());
+    // print(busCubit.state.busInfo?.msgBody.itemList.first.toJson());
     // print(busCubit.state.routePath?.msgBody.itemList.first.toJson());
-    print(busCubit.state.stationList?.msgBody.itemList.first.toJson());
+    // print(busCubit.state.stationList?.msgBody.itemList.first.toJson());
 
     return Stack(
       children: [
         GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
             appBar: AppBar(
               title: Text(
                 'Bus Info',
                 style: StyleText.bodyLarge(context),
               ),
-            ),
-            body: ValueListenableBuilder(
-              valueListenable: isMapFullScreen,
-              builder: (context, isFullScreen, child) => SingleChildScrollView(
-                child: Column(
-                  spacing: 20,
-                  children: [
-                    if (!isFullScreen) ...[
-                      Hero(
-                        tag: widget.heroTag ?? '',
-                        child: Image.asset('assets/images/test_1.avif'),
+              actions: [
+                ValueListenableBuilder(
+                  valueListenable: displayActions,
+                  builder: (context, isDisplay, child) => AnimatedOpacity(
+                    opacity: isDisplay ? 1 : 0,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    child: GestureDetector(
+                      onTap: openSearchModal,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.search,
+                          size: 30,
+                        ),
                       ),
-                      fieldRow(),
-                      BusDetails(),
-                    ],
-                    BusMap(
-                      shouldDrawLine: shouldDrawLine,
-                      isMapFullScreen: isMapFullScreen,
                     ),
-                    Gap(isFullScreen ? 0 : 100),
-                  ],
+                  ),
+                ),
+              ],
+              scrolledUnderElevation: 10,
+            ),
+            body: Form(
+              key: _formKey,
+              child: ValueListenableBuilder(
+                valueListenable: isMapFullScreen,
+                builder: (context, isFullScreen, child) =>
+                    SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    spacing: 12,
+                    children: [
+                      if (!isFullScreen) ...[
+                        fieldRow(focusNode: searchFocusNode),
+                        Hero(
+                          tag: widget.heroTag ?? '',
+                          child: Image.asset('assets/images/test_1.avif'),
+                        ),
+                        BusDetails(),
+                      ],
+                      BusMap(
+                        shouldDrawLine: shouldDrawLine,
+                        isMapFullScreen: isMapFullScreen,
+                      ),
+                      Gap(isFullScreen ? 0 : 150),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -106,49 +170,46 @@ class _BusInfoPageState extends State<BusInfoPage> {
         PublicMethod.nextButtonIosKeyboard(
           context,
           displayCondition: searchFocusNode.hasFocus,
-          onTapFuction: () => FocusScope.of(context).unfocus(),
+          onTapFuction: () => FocusManager.instance.primaryFocus?.unfocus(),
           buttonText: '닫기',
         ),
       ],
     );
   }
 
-  Padding fieldRow() {
+  Padding fieldRow({FocusNode? focusNode}) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          spacing: 12,
-          children: [
-            CustomSearchBar(
-              textFormField: CustomTextFormField(
-                focusNode: searchFocusNode,
-                controller: searchController,
-                hintText: '버스 번호',
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.number,
-                masks: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                onChange: (_) {
-                  if (searchController.text.length == 1) {
-                    _formKey.currentState!.validate();
+      child: Column(
+        spacing: 12,
+        children: [
+          CustomSearchBar(
+            textFormField: CustomTextFormField(
+              focusNode: focusNode,
+              controller: searchController,
+              hintText: '버스 번호',
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.number,
+              masks: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              onChange: (_) {
+                if (searchController.text.length == 1) {
+                  _formKey.currentState!.validate();
+                }
+              },
+              validator: (String? value) {
+                {
+                  if (value == null || value.isEmpty) {
+                    return '버스 번호를 입력하세요.';
                   }
-                },
-                validator: (String? value) {
-                  {
-                    if (value == null || value.isEmpty) {
-                      return '버스 번호를 입력하세요.';
-                    }
-                    return null;
-                  }
-                },
-              ),
-              onTapSearch: () async => validateSearch(),
+                  return null;
+                }
+              },
             ),
-          ],
-        ),
+            onTapSearch: () async => validateSearch(),
+          ),
+        ],
       ),
     );
   }

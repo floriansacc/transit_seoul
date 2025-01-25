@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gap/gap.dart';
 import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,73 @@ class PublicMethod {
     String? params,
   }) async {
     GoRouter.of(context).push(path.path, extra: extra);
+  }
+
+  static void dialog(
+    BuildContext? context,
+    Widget content, {
+    bool isDismis = true,
+    EdgeInsets modalPadding = const EdgeInsets.symmetric(horizontal: 20),
+  }) {
+    showDialog(
+      context: context ?? navigatorKey.currentContext!,
+      barrierDismissible: isDismis,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          contentPadding: const EdgeInsets.fromLTRB(12, 28, 12, 12),
+          insetPadding: modalPadding,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          content: SizedBox(
+            width: MediaQuery.sizeOf(context).width,
+            child: content,
+          ),
+        );
+      },
+    );
+  }
+
+  static modalSingleButton(
+    BuildContext? context, {
+    bool dismissible = true,
+    EdgeInsets modalPadding = const EdgeInsets.symmetric(horizontal: 20),
+    required String title,
+    required String description,
+    String buttonText = '확인',
+    Color? buttonBgColor,
+    VoidCallback? onTap,
+  }) {
+    return dialog(
+      context,
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Gap(8),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Text(
+              description,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Gap(20),
+          // ConfirmButton(
+          // ),
+        ],
+      ),
+      isDismis: dismissible,
+      modalPadding: modalPadding,
+    );
   }
 
   static void toast(

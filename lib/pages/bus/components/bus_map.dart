@@ -22,7 +22,7 @@ class BusMap extends StatefulWidget {
 class _BusMapState extends State<BusMap> {
   final Key _mapKey = GlobalKey();
 
-  late KakaoMapController mapController;
+  KakaoMapController? mapController;
 
   final List<Polyline> polylines = [];
 
@@ -45,8 +45,18 @@ class _BusMapState extends State<BusMap> {
 
   @override
   void dispose() {
-    mapController.dispose();
+    mapController?.dispose();
     isMapControl.dispose();
+
+    widget.shouldDrawLine.removeListener(() async {
+      if (widget.shouldDrawLine.value) {
+        await drawBusLine();
+      }
+    });
+
+    widget.isMapFullScreen.removeListener(() async {
+      await getMapOnBusLine();
+    });
     super.dispose();
   }
 
@@ -76,7 +86,7 @@ class _BusMapState extends State<BusMap> {
     }
 
     setState(() {});
-    await mapController.fitBounds([
+    await mapController?.fitBounds([
       LatLng(minLat, minLng),
       LatLng(maxLat, maxLng),
     ]);
@@ -134,9 +144,8 @@ class _BusMapState extends State<BusMap> {
               ),
             ),
             Positioned(
-              bottom: widget.isMapFullScreen.value ? null : 0,
               right: 0,
-              top: widget.isMapFullScreen.value ? 0 : null,
+              top: 0,
               child: GestureDetector(
                 onTap: () => widget.isMapFullScreen.value =
                     !widget.isMapFullScreen.value,

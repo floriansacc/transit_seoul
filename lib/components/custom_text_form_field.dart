@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField({
     super.key,
-    required this.focusNode,
+    this.focusNode,
     required this.controller,
     this.hintText,
     this.errorText,
@@ -16,7 +16,7 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
   });
 
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
   final TextEditingController controller;
   final String? hintText;
   final String? errorText;

@@ -86,9 +86,9 @@ class BusService extends GlobalService {
 
         final Map<String, dynamic> json = jsonDecode(response.body);
 
-        fbDoc
-            .set(json)
-            .then((_) => debugPrint('$busId saved to firebase RoutePathList'));
+        // fbDoc
+        //     .set(json)
+        //     .then((_) => debugPrint('$busId saved to firebase RoutePathList'));
 
         return BusRoutePathList.fromJson(json);
       }
@@ -128,9 +128,9 @@ class BusService extends GlobalService {
 
         final Map<String, dynamic> json = jsonDecode(response.body);
 
-        fbDoc.set(json).then(
-              (_) => debugPrint('$busId saved to firebase StationsByRouteList'),
-            );
+        // fbDoc.set(json).then(
+        //       (_) => debugPrint('$busId saved to firebase StationsByRouteList'),
+        //     );
 
         return BusStationList.fromJson(json);
       }
