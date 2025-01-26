@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
-    required this.onTap,
     required this.content,
     this.bgColor,
+    this.margin,
   });
 
-  final VoidCallback onTap;
   final Widget content;
   final Color? bgColor;
+  final EdgeInsets? margin;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: margin ?? EdgeInsets.all(16),
       child: GestureDetector(
-        onTap: onTap,
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
           clipBehavior: Clip.hardEdge,

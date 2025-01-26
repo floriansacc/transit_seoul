@@ -31,6 +31,7 @@ class _BusDetailsState extends State<BusDetails> {
     return Column(
       children: [
         CustomCard(
+          margin: EdgeInsets.fromLTRB(16, 0, 16, 16),
           bgColor: switch (busStatus) {
             BusInfoStatus.initial =>
               Theme.of(context).colorScheme.primaryContainer,
@@ -40,7 +41,6 @@ class _BusDetailsState extends State<BusDetails> {
             BusInfoStatus.success =>
               Theme.of(context).colorScheme.primaryContainer,
           },
-          onTap: () {},
           content: Column(
             spacing: 12,
             crossAxisAlignment: busStatus.isInitial || busStatus.isLoading

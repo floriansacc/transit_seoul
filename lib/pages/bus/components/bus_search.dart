@@ -44,7 +44,7 @@ class _BusSearchState extends State<BusSearch> {
     }
     if (!mounted) throw Exception();
 
-    if (context.read<BusInfoCubit>().state.busInfo != null) {
+    if (context.read<BusInfoCubit>().state.status.isSuccess) {
       searchController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
     }

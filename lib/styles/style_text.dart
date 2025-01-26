@@ -24,7 +24,7 @@ class StyleText {
     );
     return Theme.of(context).textTheme.headlineMedium?.copyWith(
           color: getColor(context, color: color, colorType: colorType),
-          fontWeight: fontWeight ?? FontWeight.w400,
+          fontWeight: fontWeight,
         );
   }
 
@@ -40,7 +40,7 @@ class StyleText {
     );
     return Theme.of(context).textTheme.headlineSmall?.copyWith(
           color: getColor(context, color: color, colorType: colorType),
-          fontWeight: fontWeight ?? FontWeight.w400,
+          fontWeight: fontWeight,
         );
   }
 
@@ -56,7 +56,7 @@ class StyleText {
     );
     return Theme.of(context).textTheme.titleMedium?.copyWith(
           color: getColor(context, color: color, colorType: colorType),
-          fontWeight: fontWeight ?? FontWeight.w400,
+          fontWeight: fontWeight,
         );
   }
 
@@ -72,7 +72,7 @@ class StyleText {
     );
     return Theme.of(context).textTheme.titleLarge?.copyWith(
           color: getColor(context, color: color, colorType: colorType),
-          fontWeight: fontWeight ?? FontWeight.w400,
+          fontWeight: fontWeight,
         );
   }
 
@@ -88,7 +88,7 @@ class StyleText {
     );
     return Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: getColor(context, color: color, colorType: colorType),
-          fontWeight: fontWeight ?? FontWeight.w400,
+          fontWeight: fontWeight,
         );
   }
 
@@ -104,7 +104,23 @@ class StyleText {
     );
     return Theme.of(context).textTheme.bodyLarge?.copyWith(
           color: getColor(context, color: color, colorType: colorType),
-          fontWeight: fontWeight ?? FontWeight.w400,
+          fontWeight: fontWeight,
+        );
+  }
+
+  static TextStyle? labelSmall(
+    BuildContext context, {
+    ColorType? colorType,
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    assert(
+      colorType == null || color == null,
+      'cannot specify both colorType and color',
+    );
+    return Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: getColor(context, color: color, colorType: colorType),
+          fontWeight: fontWeight,
         );
   }
 }

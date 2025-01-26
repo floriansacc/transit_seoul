@@ -48,15 +48,6 @@ class _BusMapState extends State<BusMap> {
     mapController?.dispose();
     isMapControl.dispose();
 
-    widget.shouldDrawLine.removeListener(() async {
-      if (widget.shouldDrawLine.value) {
-        await drawBusLine();
-      }
-    });
-
-    widget.isMapFullScreen.removeListener(() async {
-      await getMapOnBusLine();
-    });
     super.dispose();
   }
 
@@ -119,7 +110,6 @@ class _BusMapState extends State<BusMap> {
   @override
   Widget build(BuildContext context) {
     // BusInfoCubit busCubit = context.watch<BusInfoCubit>();
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(

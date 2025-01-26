@@ -7,14 +7,18 @@ class ConfirmButton extends StatelessWidget {
     required this.onTap,
     this.verticalPaddingModifier,
     this.horizontalPaddingModifier,
+    this.color,
     this.height,
+    this.width,
   });
 
   final String description;
   final VoidCallback onTap;
   final double? verticalPaddingModifier;
   final double? horizontalPaddingModifier;
+  final Color? color;
   final double? height;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +29,12 @@ class ConfirmButton extends StatelessWidget {
       ),
       child: SizedBox(
         height: height,
-        width: double.infinity,
+        width: width ?? double.infinity,
         child: TextButton(
           onPressed: onTap,
           style: ButtonStyle(
             backgroundColor: WidgetStatePropertyAll(
-              Theme.of(context).colorScheme.primaryContainer,
+              color ?? Theme.of(context).colorScheme.primaryContainer,
             ),
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(

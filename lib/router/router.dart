@@ -1,8 +1,10 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit_seoul/pages/bus/bus_info_page.dart';
 import 'package:transit_seoul/pages/bus/bus_page.dart';
 import 'package:transit_seoul/pages/map/map_page.dart';
 import 'package:transit_seoul/pages/metro/metro_page.dart';
 import 'package:transit_seoul/pages/settings/settings_page.dart';
+import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -132,8 +134,11 @@ final GoRouter _router = GoRouter(
       pageBuilder: (context, state) {
         Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
         return CupertinoPage(
-          child: BusInfoPage(
-            heroTag: extra?['heroTag'],
+          child: BlocProvider(
+            create: (context) => MapPointCubit(),
+            child: BusInfoPage(
+              heroTag: extra?['heroTag'],
+            ),
           ),
         );
       },

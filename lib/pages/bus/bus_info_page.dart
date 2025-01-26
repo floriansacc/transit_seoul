@@ -3,6 +3,7 @@ import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/pages/bus/components/bus_details.dart';
 import 'package:transit_seoul/pages/bus/components/bus_map.dart';
 import 'package:transit_seoul/pages/bus/components/bus_search.dart';
+import 'package:transit_seoul/pages/bus/components/bus_stop_list.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/styles/style_text.dart';
 import 'package:flutter/material.dart';
@@ -117,24 +118,31 @@ class _BusInfoPageState extends State<BusInfoPage> {
               builder: (context, isFullScreen, child) => SingleChildScrollView(
                 controller: scrollController,
                 child: Column(
-                  spacing: 12,
+                  spacing: 16,
                   children: [
                     if (!isFullScreen) ...[
                       BusSearch(
                         shouldDrawLine: shouldDrawLine,
                         focusNode: searchFocusNode,
                       ),
-                      Hero(
-                        tag: widget.heroTag ?? '',
-                        child: Image.asset('assets/images/test_1.avif'),
-                      ),
-                      BusDetails(),
+                      // Hero(
+                      //   tag: widget.heroTag ?? '',
+                      //   child: Image.asset('assets/images/test_1.avif'),
+                      // ),
                     ],
                     BusMap(
                       shouldDrawLine: shouldDrawLine,
                       isMapFullScreen: isMapFullScreen,
                     ),
-                    Gap(isFullScreen ? 0 : 150),
+                    Column(
+                      children: [
+                        if (!isFullScreen) ...[
+                          BusDetails(),
+                          BusStopList(),
+                          Gap(150),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),
