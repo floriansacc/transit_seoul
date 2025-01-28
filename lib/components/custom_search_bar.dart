@@ -8,11 +8,13 @@ class CustomSearchBar extends StatelessWidget {
     required this.textFormField,
     required this.onTapSearch,
     this.searchDescription,
+    this.buttonBgColor,
   });
 
   final CustomTextFormField textFormField;
   final void Function() onTapSearch;
   final String? searchDescription;
+  final Color? buttonBgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class CustomSearchBar extends StatelessWidget {
         ),
         Flexible(
           child: ConfirmButton(
+            color: buttonBgColor,
             height: 55,
             description: searchDescription ?? '검색',
             onTap: onTapSearch,

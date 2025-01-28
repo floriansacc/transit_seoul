@@ -63,7 +63,7 @@ class _BusSearchState extends State<BusSearch> {
               textFormField: CustomTextFormField(
                 focusNode: widget.focusNode,
                 controller: searchController,
-                hintText: '버스 번호',
+                hintText: '버스 번호...',
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.number,
                 masks: [

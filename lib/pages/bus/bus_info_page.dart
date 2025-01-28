@@ -86,9 +86,6 @@ class _BusInfoPageState extends State<BusInfoPage> {
     BusInfoCubit busCubit = context.watch<BusInfoCubit>();
 
     print(busCubit.state.busId?.toJson());
-    // print(busCubit.state.busInfo?.msgBody.itemList.first.toJson());
-    // print(busCubit.state.routePath?.msgBody.itemList.first.toJson());
-    // print(busCubit.state.stationList?.msgBody.itemList.first.toJson());
 
     return Stack(
       children: [
@@ -114,7 +111,6 @@ class _BusInfoPageState extends State<BusInfoPage> {
                           focusNode: searchFocusNode,
                         ),
                       ),
-
                     SliverGap(16),
                     ValueListenableBuilder(
                       valueListenable: isMapStickyTop,
@@ -133,7 +129,6 @@ class _BusInfoPageState extends State<BusInfoPage> {
                                 if (!isFullScreen) ...[
                                   BusDetails(),
                                   BusStopList(),
-                                  Gap(150),
                                 ],
                                 // Hero(
                                 //   tag: widget.heroTag ?? '',
@@ -144,25 +139,21 @@ class _BusInfoPageState extends State<BusInfoPage> {
                           ]),
                         ),
                       ),
-                    ), // TODO FINISH
+                    ),
                   ],
                 ),
               ),
             ),
           ),
         ),
-        // PublicMethod.nextButtonIosKeyboard(
-        //   context,
-        //   displayCondition: searchFocusNode.hasFocus,
-        //   onTapFuction: () => FocusManager.instance.primaryFocus?.unfocus(),
-        //   buttonText: '닫기',
-        // ),
       ],
     );
   }
 
   Widget appBar() {
     return SliverAppBar(
+      centerTitle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Colors.transparent,
       floating: true,
       pinned: false,

@@ -2,7 +2,24 @@ import 'package:transit_seoul/enums/color_type.dart';
 import 'package:flutter/material.dart';
 
 class StyleText {
-  static getColor(BuildContext context, {ColorType? colorType, Color? color}) =>
+  static Color getColorContainer(
+    BuildContext context, {
+    ColorType? colorType,
+    Color? color,
+  }) =>
+      switch (colorType) {
+        ColorType.primary => Theme.of(context).colorScheme.primaryContainer,
+        ColorType.secondary => Theme.of(context).colorScheme.secondaryContainer,
+        ColorType.tertiary => Theme.of(context).colorScheme.tertiaryContainer,
+        ColorType.error => Theme.of(context).colorScheme.errorContainer,
+        _ => color ?? Theme.of(context).colorScheme.primaryContainer,
+      };
+
+  static Color getColorOnContainer(
+    BuildContext context, {
+    ColorType? colorType,
+    Color? color,
+  }) =>
       switch (colorType) {
         ColorType.primary => Theme.of(context).colorScheme.onPrimaryContainer,
         ColorType.secondary =>
@@ -23,7 +40,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.headlineMedium?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }
@@ -39,7 +57,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.headlineSmall?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }
@@ -55,7 +74,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }
@@ -71,7 +91,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.titleLarge?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }
@@ -87,7 +108,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }
@@ -103,7 +125,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }
@@ -119,7 +142,8 @@ class StyleText {
       'cannot specify both colorType and color',
     );
     return Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: getColor(context, color: color, colorType: colorType),
+          color:
+              getColorOnContainer(context, color: color, colorType: colorType),
           fontWeight: fontWeight,
         );
   }

@@ -14,6 +14,7 @@ class CustomTextFormField extends StatelessWidget {
     this.onChange,
     this.onSaved,
     this.keyboardType = TextInputType.text,
+    this.borderColor,
   });
 
   final FocusNode? focusNode;
@@ -26,6 +27,7 @@ class CustomTextFormField extends StatelessWidget {
   final void Function(String?)? onChange;
   final void Function(String?)? onSaved;
   final TextInputType keyboardType;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +75,8 @@ class CustomTextFormField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
             width: 1,
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color:
+                borderColor ?? Theme.of(context).colorScheme.primaryContainer,
           ),
           borderRadius: BorderRadius.all(Radius.circular(12)),
         ),
