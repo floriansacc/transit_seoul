@@ -28,7 +28,6 @@ class SettingsCubit extends Cubit<SettingsState> {
   void switchTheme(ThemeEnum theme) {
     prefs.setString(SettingsEnum.theme.value, theme.name);
     emit(state.copyWith(status: SettingsStatus.success, isDarkTheme: theme));
-    print(state.isDarkTheme);
   }
 
   void switchMapControl({required bool entry}) {

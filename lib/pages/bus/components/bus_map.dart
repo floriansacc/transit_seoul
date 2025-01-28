@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:transit_seoul/models/bus/bus_route_path_list.dart';
+import 'package:transit_seoul/models/kakao/custom_marker.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
+import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/providers/settings_cubit/settings_cubit.dart';
 
 class BusMap extends StatefulWidget {
@@ -175,6 +177,11 @@ class _BusMapState extends State<BusMap> {
       zoomControlPosition: ControlPosition.left,
       key: _mapKey,
       polylines: polylines,
+      markers: [
+        for (final CustomMarker e
+            in context.watch<MapPointCubit>().state.marker ?? [])
+          e.marker,
+      ],
       onMapCreated: (controller) {
         mapController = controller;
 

@@ -16,11 +16,11 @@ class MapPointState extends Equatable {
   });
 
   final MapPointStatus status;
-  final List<Marker>? marker;
+  final List<CustomMarker>? marker;
 
   MapPointState copyWith({
     MapPointStatus? status,
-    List<Marker>? marker,
+    List<CustomMarker>? marker,
   }) {
     return MapPointState(
       status: status ?? this.status,

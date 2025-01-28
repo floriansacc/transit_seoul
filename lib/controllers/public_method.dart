@@ -74,12 +74,12 @@ class PublicMethod {
   static void dialog(
     BuildContext? context,
     Widget content, {
-    bool isDismis = true,
+    bool canDismiss = true,
     EdgeInsets modalPadding = const EdgeInsets.symmetric(horizontal: 20),
   }) {
     showDialog(
       context: context ?? navigatorKey.currentContext!,
-      barrierDismissible: isDismis,
+      barrierDismissible: canDismiss,
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.white,
@@ -133,7 +133,7 @@ class PublicMethod {
           // ),
         ],
       ),
-      isDismis: dismissible,
+      canDismiss: dismissible,
       modalPadding: modalPadding,
     );
   }

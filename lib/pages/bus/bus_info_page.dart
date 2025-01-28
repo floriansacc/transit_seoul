@@ -28,6 +28,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
   FocusNode searchFocusNode = FocusNode();
 
   final ValueNotifier<bool> displayActions = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isMapStickyTop = ValueNotifier<bool>(false);
 
   final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isMapFullScreen = ValueNotifier<bool>(false);
@@ -50,6 +51,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
     searchFocusNode.dispose();
     isMapFullScreen.dispose();
     displayActions.dispose();
+    isMapStickyTop.dispose();
     scrollController.dispose();
     super.dispose();
   }
@@ -57,7 +59,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
   void openSearchModal() {
     PublicMethod.dialog(
       context,
-      isDismis: false,
+      canDismiss: false,
       Column(
         spacing: 12,
         mainAxisSize: MainAxisSize.min,
@@ -106,6 +108,19 @@ class _BusInfoPageState extends State<BusInfoPage> {
                           Icons.search,
                           size: 30,
                         ),
+                      ),
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: isMapStickyTop,
+                  builder: (context, isSticky, child) => GestureDetector(
+                    onTap: () => isMapStickyTop.value = !isSticky,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        isSticky ? Icons.map : Icons.map_outlined,
+                        size: 30,
                       ),
                     ),
                   ),

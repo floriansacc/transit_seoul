@@ -13,9 +13,21 @@ import 'package:transit_seoul/styles/style_text.dart';
 class BusStopList extends StatelessWidget {
   const BusStopList({super.key});
 
+  Future<void> displayStationOnMap(
+    BuildContext context,
+    StationListItem station,
+  ) async {
+    await context.read<MapPointCubit>().addMarker(
+          markerId: station.stationNo,
+          markerName: station.stationNm,
+          point: LatLng(station.gpsY, station.gpsX),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     BusInfoCubit busCubit = context.watch<BusInfoCubit>();
+    MapPointCubit mapPointCubit = context.watch<MapPointCubit>();
 
     List<StationListItem> stationList =
         busCubit.state.stationList?.msgBody.itemList ?? [];
@@ -35,7 +47,12 @@ class BusStopList extends StatelessWidget {
             emptyStation(context, busCubit)
           else
             for (final (int i, StationListItem e) in stationList.indexed)
-              stopRow(context, e, isLast: stationList.length - 1 == i),
+              stopRow(
+                context,
+                e,
+                mapPointCubit: mapPointCubit,
+                isLast: stationList.length - 1 == i,
+              ),
         ],
       ),
     );
@@ -44,15 +61,9 @@ class BusStopList extends StatelessWidget {
   Widget stopRow(
     BuildContext context,
     StationListItem station, {
+    required MapPointCubit mapPointCubit,
     required bool isLast,
   }) {
-    Future<void> displayStationOnMap() async {
-      await context.read<MapPointCubit>().addMarker(
-            markerName: station.stationNm,
-            point: LatLng(station.gpsY, station.gpsX),
-          );
-    }
-
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
@@ -68,6 +79,7 @@ class BusStopList extends StatelessWidget {
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Flexible(
             child: Column(
@@ -116,8 +128,12 @@ class BusStopList extends StatelessWidget {
           Row(
             children: [
               ConfirmButton(
-                description: '표시',
-                onTap: () async => displayStationOnMap(),
+                description: mapPointCubit.state.marker
+                            ?.any((e) => e.markerId == station.stationNo) ==
+                        true
+                    ? '제거'
+                    : '표시',
+                onTap: () async => displayStationOnMap(context, station),
                 color: Theme.of(context).colorScheme.secondaryContainer,
                 width: 60,
                 height: 48,
