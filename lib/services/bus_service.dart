@@ -86,9 +86,9 @@ class BusService extends GlobalService {
 
         final Map<String, dynamic> json = jsonDecode(response.body);
 
-        // fbDoc
-        //     .set(json)
-        //     .then((_) => debugPrint('$busId saved to firebase RoutePathList'));
+        fbDoc
+            .set(json)
+            .then((_) => debugPrint('$busId saved to firebase RoutePathList'));
 
         return BusRoutePathList.fromJson(json);
       }
@@ -102,38 +102,38 @@ class BusService extends GlobalService {
     String endpoint = '/busRouteInfo/getStaionByRoute?';
 
     try {
-      FirebaseFirestore db = FirebaseFirestore.instance;
+      // FirebaseFirestore db = FirebaseFirestore.instance;
 
-      DocumentReference<Map<String, dynamic>> fbDoc = db
-          .collection(FirebaseCollection.stationsByRouteList.title)
-          .doc('$busId');
+      // DocumentReference<Map<String, dynamic>> fbDoc = db
+      //     .collection(FirebaseCollection.stationsByRouteList.title)
+      //     .doc('$busId');
 
-      DocumentSnapshot<Map<String, dynamic>> stationsByRoute =
-          await fbDoc.get();
+      // DocumentSnapshot<Map<String, dynamic>> stationsByRoute =
+      //     await fbDoc.get();
 
-      if (stationsByRoute.exists) {
-        debugPrint('$busId from firebase StationsByRouteList');
-        return BusStationList.fromJson(stationsByRoute.data() ?? {});
-      } else {
-        final Response response = await httpRequest(
-          HttpMethod.get,
-          apiUrl: ApiType.bus,
-          path: endpoint,
-          queryParameters: {'busRouteId': '$busId'},
-        );
+      // if (stationsByRoute.exists) {
+      //   debugPrint('$busId from firebase StationsByRouteList');
+      //   return BusStationList.fromJson(stationsByRoute.data() ?? {});
+      // } else {
+      final Response response = await httpRequest(
+        HttpMethod.get,
+        apiUrl: ApiType.bus,
+        path: endpoint,
+        queryParameters: {'busRouteId': '$busId'},
+      );
 
-        if (response.statusCode != 200) {
-          throw ApiException(response.statusCode, response.body);
-        }
-
-        final Map<String, dynamic> json = jsonDecode(response.body);
-
-        // fbDoc.set(json).then(
-        //       (_) => debugPrint('$busId saved to firebase StationsByRouteList'),
-        //     );
-
-        return BusStationList.fromJson(json);
+      if (response.statusCode != 200) {
+        throw ApiException(response.statusCode, response.body);
       }
+
+      final Map<String, dynamic> json = jsonDecode(response.body);
+
+      // fbDoc.set(json).then(
+      //       (_) => debugPrint('$busId saved to firebase StationsByRouteList'),
+      //     );
+
+      return BusStationList.fromJson(json);
+      // }
     } catch (e, s) {
       errorLog(e, s);
       rethrow;

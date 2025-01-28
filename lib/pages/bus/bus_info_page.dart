@@ -1,3 +1,4 @@
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:transit_seoul/components/confirm_button.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/pages/bus/components/bus_details.dart';
@@ -28,7 +29,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
   FocusNode searchFocusNode = FocusNode();
 
   final ValueNotifier<bool> displayActions = ValueNotifier<bool>(false);
-  final ValueNotifier<bool> isMapStickyTop = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isMapStickyTop = ValueNotifier<bool>(true);
 
   final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isMapFullScreen = ValueNotifier<bool>(false);
@@ -40,6 +41,12 @@ class _BusInfoPageState extends State<BusInfoPage> {
       if (scrollController.offset >= 56 && !displayActions.value) {
         displayActions.value = true;
       } else if (scrollController.offset < 56 && displayActions.value) {
+        displayActions.value = false;
+      }
+    });
+
+    isMapFullScreen.addListener(() {
+      if (isMapFullScreen.value) {
         displayActions.value = false;
       }
     });
@@ -88,76 +95,56 @@ class _BusInfoPageState extends State<BusInfoPage> {
         GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                'Bus Info',
-                style: StyleText.bodyLarge(context),
-              ),
-              actions: [
-                ValueListenableBuilder(
-                  valueListenable: displayActions,
-                  builder: (context, isDisplay, child) => AnimatedOpacity(
-                    opacity: isDisplay ? 1 : 0,
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    child: GestureDetector(
-                      onTap: openSearchModal,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.search,
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: isMapStickyTop,
-                  builder: (context, isSticky, child) => GestureDetector(
-                    onTap: () => isMapStickyTop.value = !isSticky,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        isSticky ? Icons.map : Icons.map_outlined,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-              scrolledUnderElevation: 10,
-            ),
             body: ValueListenableBuilder(
               valueListenable: isMapFullScreen,
-              builder: (context, isFullScreen, child) => SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  spacing: 16,
-                  children: [
-                    if (!isFullScreen) ...[
-                      BusSearch(
-                        shouldDrawLine: shouldDrawLine,
-                        focusNode: searchFocusNode,
+              builder: (context, isFullScreen, child) => SafeArea(
+                top: true,
+                bottom: false,
+                left: false,
+                right: false,
+                child: CustomScrollView(
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  slivers: [
+                    appBar(),
+                    if (!isFullScreen)
+                      SliverToBoxAdapter(
+                        child: BusSearch(
+                          shouldDrawLine: shouldDrawLine,
+                          focusNode: searchFocusNode,
+                        ),
                       ),
-                      // Hero(
-                      //   tag: widget.heroTag ?? '',
-                      //   child: Image.asset('assets/images/test_1.avif'),
-                      // ),
-                    ],
-                    BusMap(
-                      shouldDrawLine: shouldDrawLine,
-                      isMapFullScreen: isMapFullScreen,
-                    ),
-                    Column(
-                      children: [
-                        if (!isFullScreen) ...[
-                          BusDetails(),
-                          BusStopList(),
-                          Gap(150),
-                        ],
-                      ],
-                    ),
+
+                    SliverGap(16),
+                    ValueListenableBuilder(
+                      valueListenable: isMapStickyTop,
+                      builder: (context, isSticky, child) => SliverStickyHeader(
+                        header: BusMap(
+                          shouldDrawLine: shouldDrawLine,
+                          isMapFullScreen: isMapFullScreen,
+                        ),
+                        sticky: isSticky,
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate([
+                            Column(
+                              spacing: 16,
+                              children: [
+                                Gap(16),
+                                if (!isFullScreen) ...[
+                                  BusDetails(),
+                                  BusStopList(),
+                                  Gap(150),
+                                ],
+                                // Hero(
+                                //   tag: widget.heroTag ?? '',
+                                //   child: Image.asset('assets/images/test_1.avif'),
+                                // ),
+                              ],
+                            ),
+                          ]),
+                        ),
+                      ),
+                    ), // TODO FINISH
                   ],
                 ),
               ),
@@ -171,6 +158,54 @@ class _BusInfoPageState extends State<BusInfoPage> {
         //   buttonText: '닫기',
         // ),
       ],
+    );
+  }
+
+  Widget appBar() {
+    return SliverAppBar(
+      surfaceTintColor: Colors.transparent,
+      floating: true,
+      pinned: false,
+      toolbarHeight: 56,
+      collapsedHeight: 60,
+      title: Text(
+        'Bus Info',
+        style: StyleText.bodyLarge(context),
+      ),
+      actions: [
+        ValueListenableBuilder(
+          valueListenable: displayActions,
+          builder: (context, isDisplay, child) => AnimatedOpacity(
+            opacity: isDisplay ? 1 : 0,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: GestureDetector(
+              onTap: openSearchModal,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.search,
+                  size: 30,
+                ),
+              ),
+            ),
+          ),
+        ),
+        ValueListenableBuilder(
+          valueListenable: isMapStickyTop,
+          builder: (context, isSticky, child) => GestureDetector(
+            onTap: () => isMapStickyTop.value = !isSticky,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
+                isSticky ? Icons.map : Icons.map_outlined,
+                size: 30,
+              ),
+            ),
+          ),
+        ),
+      ],
+      scrolledUnderElevation: 10,
     );
   }
 }
