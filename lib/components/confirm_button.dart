@@ -4,21 +4,25 @@ class ConfirmButton extends StatelessWidget {
   const ConfirmButton({
     super.key,
     required this.description,
+    this.textStyle,
     required this.onTap,
     this.verticalPaddingModifier,
     this.horizontalPaddingModifier,
     this.color,
     this.height,
     this.width,
+    this.borderSide = BorderSide.none,
   });
 
   final String description;
+  final TextStyle? textStyle;
   final VoidCallback onTap;
   final double? verticalPaddingModifier;
   final double? horizontalPaddingModifier;
   final Color? color;
   final double? height;
   final double? width;
+  final BorderSide borderSide;
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +42,14 @@ class ConfirmButton extends StatelessWidget {
             ),
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
+                side: borderSide,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
             ),
           ),
           child: Text(
             description,
+            style: textStyle,
             textAlign: TextAlign.center,
           ),
         ),

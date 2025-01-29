@@ -13,21 +13,25 @@ class MapPointState extends Equatable {
   const MapPointState({
     this.status = MapPointStatus.initial,
     this.marker,
+    this.zoomCoordinates,
   });
 
   final MapPointStatus status;
   final List<CustomMarker>? marker;
+  final LatLng? zoomCoordinates;
 
   MapPointState copyWith({
     MapPointStatus? status,
     List<CustomMarker>? marker,
+    LatLng? zoomCoordinates,
   }) {
     return MapPointState(
       status: status ?? this.status,
       marker: marker ?? this.marker,
+      zoomCoordinates: zoomCoordinates ?? this.zoomCoordinates,
     );
   }
 
   @override
-  List<Object?> get props => [status, marker];
+  List<Object?> get props => [status, marker, zoomCoordinates];
 }

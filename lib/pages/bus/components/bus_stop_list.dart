@@ -13,7 +13,12 @@ import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/styles/style_text.dart';
 
 class BusStopList extends StatefulWidget {
-  const BusStopList({super.key});
+  const BusStopList({
+    super.key,
+    required this.isZoomOnMap,
+  });
+
+  final ValueNotifier<bool> isZoomOnMap;
 
   @override
   State<BusStopList> createState() => _BusStopListState();
@@ -40,15 +45,18 @@ class _BusStopListState extends State<BusStopList> {
     }
   }
 
-  Future<void> displayStationOnMap(
-    BuildContext context,
-    StationListItem station,
-  ) async {
+  Future<void> displayStationOnMap(StationListItem station) async {
     await context.read<MapPointCubit>().addMarker(
           markerId: station.stationNo,
           markerName: station.stationNm,
           point: LatLng(station.gpsY, station.gpsX),
         );
+  }
+
+  void zoomToStop(StationListItem station) {
+    widget.isZoomOnMap.value = false;
+    context.read<MapPointCubit>().zoomOnMap(LatLng(station.gpsY, station.gpsX));
+    widget.isZoomOnMap.value = true;
   }
 
   @override
@@ -117,6 +125,10 @@ class _BusStopListState extends State<BusStopList> {
     required MapPointCubit mapPointCubit,
     required bool isLast,
   }) {
+    bool isSelected = mapPointCubit.state.marker
+            ?.any((e) => e.markerId == station.stationNo) ==
+        true;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
@@ -135,16 +147,20 @@ class _BusStopListState extends State<BusStopList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Flexible(
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 8,
               children: [
                 Row(
                   children: [
-                    Text(
-                      station.stationNm,
-                      style: StyleText.bodyLarge(context),
+                    Flexible(
+                      child: Text(
+                        '${station.stationNm} ${station.stationNm}',
+                        style: StyleText.bodyLarge(context),
+                      ),
                     ),
+                    Gap(8),
                   ],
                 ),
                 Row(
@@ -178,20 +194,31 @@ class _BusStopListState extends State<BusStopList> {
               ],
             ),
           ),
-          Row(
-            children: [
-              ConfirmButton(
-                description: mapPointCubit.state.marker
-                            ?.any((e) => e.markerId == station.stationNo) ==
-                        true
-                    ? '제거'
-                    : '표시',
-                onTap: () async => displayStationOnMap(context, station),
-                color: Theme.of(context).colorScheme.secondaryContainer,
-                width: 60,
-                height: 48,
-              ),
-            ],
+          Flexible(
+            flex: 2,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => zoomToStop(station),
+                  icon: Icon(Icons.location_on),
+                ),
+                Flexible(
+                  child: ConfirmButton(
+                    description: isSelected ? '제거' : '표시',
+                    borderSide: isSelected
+                        ? BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          )
+                        : BorderSide.none,
+                    onTap: () async => displayStationOnMap(station),
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    height: 48,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -203,7 +230,7 @@ class _BusStopListState extends State<BusStopList> {
       children: [
         Flexible(
           child: Text(
-            '${busCubit.state.busId?.busRouteId}번 버스에 해당되는 정류장이 없습니다.',
+            '${busCubit.state.busId?.busRouteNm}번 버스에 해당되는 정류장이 없습니다.',
             style: StyleText.bodyLarge(context, colorType: ColorType.error),
           ),
         ),

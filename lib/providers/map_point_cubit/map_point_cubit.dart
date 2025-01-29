@@ -48,4 +48,12 @@ class MapPointCubit extends Cubit<MapPointState> {
 
     emit(state.copyWith(status: MapPointStatus.success, marker: newList));
   }
+
+  void zoomOnMap(LatLng coordinates) {
+    emit(state.copyWith(zoomCoordinates: coordinates));
+  }
+
+  void resetState() {
+    emit(MapPointState(status: MapPointStatus.initial));
+  }
 }

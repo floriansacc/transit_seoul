@@ -33,6 +33,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
 
   final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isMapFullScreen = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> isZoomOnMap = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -57,6 +58,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
     shouldDrawLine.dispose();
     searchFocusNode.dispose();
     isMapFullScreen.dispose();
+    isZoomOnMap.dispose();
     displayActions.dispose();
     isMapStickyTop.dispose();
     scrollController.dispose();
@@ -118,23 +120,26 @@ class _BusInfoPageState extends State<BusInfoPage> {
                         header: BusMap(
                           shouldDrawLine: shouldDrawLine,
                           isMapFullScreen: isMapFullScreen,
+                          isZoomOnMap: isZoomOnMap,
                         ),
                         sticky: isSticky,
                         sliver: SliverList(
                           delegate: SliverChildListDelegate([
-                            Column(
-                              spacing: 16,
-                              children: [
-                                Gap(16),
-                                if (!isFullScreen) ...[
+                            Visibility(
+                              visible: !isFullScreen,
+                              maintainState: true,
+                              child: Column(
+                                spacing: 16,
+                                children: [
+                                  Gap(16),
                                   BusDetails(),
-                                  BusStopList(),
+                                  BusStopList(isZoomOnMap: isZoomOnMap),
+                                  // Hero(
+                                  //   tag: widget.heroTag ?? '',
+                                  //   child: Image.asset('assets/images/test_1.avif'),
+                                  // ),
                                 ],
-                                // Hero(
-                                //   tag: widget.heroTag ?? '',
-                                //   child: Image.asset('assets/images/test_1.avif'),
-                                // ),
-                              ],
+                              ),
                             ),
                           ]),
                         ),

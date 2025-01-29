@@ -6,16 +6,19 @@ import 'package:transit_seoul/models/kakao/custom_marker.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/providers/settings_cubit/settings_cubit.dart';
+import 'package:transit_seoul/styles/style_text.dart';
 
 class BusMap extends StatefulWidget {
   const BusMap({
     super.key,
     required this.shouldDrawLine,
     required this.isMapFullScreen,
+    required this.isZoomOnMap,
   });
 
   final ValueNotifier<bool> shouldDrawLine;
   final ValueNotifier<bool> isMapFullScreen;
+  final ValueNotifier<bool> isZoomOnMap;
 
   @override
   State<BusMap> createState() => _BusMapState();
@@ -29,6 +32,7 @@ class _BusMapState extends State<BusMap> {
   final List<Polyline> polylines = [];
 
   ValueNotifier<bool> isMapControl = ValueNotifier<bool>(false);
+  ValueNotifier<bool> hasBeenTouched = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -40,8 +44,20 @@ class _BusMapState extends State<BusMap> {
       }
     });
     widget.isMapFullScreen.addListener(() async {
+      if (hasBeenTouched.value) return;
+      if (widget.isZoomOnMap.value) return;
+
       await Future.delayed(Duration(milliseconds: 100));
       await getMapOnBusLine();
+    });
+
+    widget.isZoomOnMap.addListener(() async {
+      if (!widget.isZoomOnMap.value) return;
+
+      LatLng? coordinates = context.read<MapPointCubit>().state.zoomCoordinates;
+      if (coordinates != null) {
+        await zoomOnCoordinates([coordinates]);
+      }
     });
   }
 
@@ -49,8 +65,14 @@ class _BusMapState extends State<BusMap> {
   void dispose() {
     mapController?.dispose();
     isMapControl.dispose();
+    hasBeenTouched.dispose();
 
     super.dispose();
+  }
+
+  Future<void> zoomOnCoordinates(List<LatLng> coordinateList) async {
+    await mapController?.fitBounds(coordinateList);
+    await mapController?.setLevel(4);
   }
 
   Future<void> getMapOnBusLine() async {
@@ -78,7 +100,7 @@ class _BusMapState extends State<BusMap> {
       }
     }
 
-    setState(() {});
+    // setState(() {});
     await mapController?.fitBounds([
       LatLng(minLat, minLng),
       LatLng(maxLat, maxLng),
@@ -93,7 +115,7 @@ class _BusMapState extends State<BusMap> {
       if (i > 0 && i % 2 == 0) {
         polylines.add(
           Polyline(
-            strokeWidth: 3,
+            strokeWidth: 2,
             strokeColor: Colors.black,
             strokeOpacity: 0.6,
             strokeStyle: StrokeStyle.solid,
@@ -111,7 +133,8 @@ class _BusMapState extends State<BusMap> {
 
   @override
   Widget build(BuildContext context) {
-    // BusInfoCubit busCubit = context.watch<BusInfoCubit>();
+    BusInfoCubit busCubit = context.watch<BusInfoCubit>();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -135,30 +158,48 @@ class _BusMapState extends State<BusMap> {
                 child: kakaoMap(context),
               ),
             ),
+            if (busCubit.state.busId?.busRouteId != null)
+              Positioned(
+                top: 4,
+                left: 4,
+                child: Text(
+                  '현재 : ${busCubit.state.busId?.busRouteNm}번',
+                  style: StyleText.bodyMedium(
+                    context,
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                  ),
+                ),
+              ),
             Positioned(
               right: 0,
               top: 0,
-              child: GestureDetector(
-                onTap: () => widget.isMapFullScreen.value =
-                    !widget.isMapFullScreen.value,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: widget.isMapFullScreen.value
-                        ? Theme.of(context).colorScheme.onPrimaryContainer
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Icon(
-                      widget.isMapFullScreen.value
-                          ? Icons.fullscreen_exit
-                          : Icons.fullscreen,
-                      size: 30,
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () async {
+                      context.read<MapPointCubit>().resetState();
+                      await getMapOnBusLine();
+                      hasBeenTouched.value = false;
+                      widget.isZoomOnMap.value = false;
+                    },
+                    icon: Icon(
+                      Icons.restart_alt,
+                      size: 24,
                       color: Theme.of(context).primaryColorDark,
                     ),
                   ),
-                ),
+                  IconButton(
+                    onPressed: () => widget.isMapFullScreen.value =
+                        !widget.isMapFullScreen.value,
+                    icon: Icon(
+                      widget.isMapFullScreen.value
+                          ? Icons.fullscreen_exit
+                          : Icons.fullscreen,
+                      size: 24,
+                      color: Theme.of(context).primaryColorDark,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -193,6 +234,11 @@ class _BusMapState extends State<BusMap> {
 
         if (routePath.isNotEmpty) {
           drawBusLine();
+        }
+      },
+      onDragChangeCallback: (latLng, zoomLevel, dragType) {
+        if (!hasBeenTouched.value) {
+          hasBeenTouched.value = true;
         }
       },
       onMapTap: (latLng) {},
