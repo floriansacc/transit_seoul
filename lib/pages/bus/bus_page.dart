@@ -30,7 +30,7 @@ class _BusPageState extends State<BusPage> {
                 RouteEnum.busInfo,
                 extra: {'heroTag': 'test_1'},
               ),
-              imageUrl: 'assets/images/test_1.avif',
+              imageUrl: 'assets/images/seoul_map_thumbnail.jpg',
               heroTag: 'test_1',
               title: '노선 정보 조회하기',
               description:

@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
+import 'dart:math' as math;
+
 class BusInfoPage extends StatefulWidget {
   const BusInfoPage({
     super.key,
@@ -93,31 +95,42 @@ class _BusInfoPageState extends State<BusInfoPage> {
       children: [
         GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-            body: ValueListenableBuilder(
-              valueListenable: isMapFullScreen,
-              builder: (context, isFullScreen, child) => SafeArea(
-                top: true,
+          child: ValueListenableBuilder(
+            valueListenable: isMapFullScreen,
+            builder: (context, isFullScreen, child) => Scaffold(
+              extendBodyBehindAppBar: true,
+              appBar: isFullScreen
+                  ? AppBar(
+                      forceMaterialTransparency: true,
+                      centerTitle: true,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      surfaceTintColor: Colors.transparent,
+                    )
+                  : null,
+              body: SafeArea(
+                top: !isFullScreen,
                 bottom: false,
                 left: false,
                 right: false,
                 child: CustomScrollView(
-                  shrinkWrap: true,
+                  shrinkWrap: false,
                   controller: scrollController,
                   slivers: [
-                    appBar(),
-                    if (!isFullScreen)
+                    if (!isFullScreen) ...[
+                      appBar(isFullScreen: isFullScreen),
                       SliverToBoxAdapter(
                         child: BusSearch(
                           shouldDrawLine: shouldDrawLine,
                           focusNode: searchFocusNode,
                         ),
                       ),
-                    SliverGap(16),
+                      SliverGap(16),
+                    ],
                     ValueListenableBuilder(
                       valueListenable: isMapStickyTop,
                       builder: (context, isSticky, child) => SliverStickyHeader(
                         header: BusMap(
+                          heroTag: widget.heroTag,
                           shouldDrawLine: shouldDrawLine,
                           isMapFullScreen: isMapFullScreen,
                           isZoomOnMap: isZoomOnMap,
@@ -134,10 +147,6 @@ class _BusInfoPageState extends State<BusInfoPage> {
                                   Gap(16),
                                   BusDetails(),
                                   BusStopList(isZoomOnMap: isZoomOnMap),
-                                  // Hero(
-                                  //   tag: widget.heroTag ?? '',
-                                  //   child: Image.asset('assets/images/test_1.avif'),
-                                  // ),
                                 ],
                               ),
                             ),
@@ -155,15 +164,14 @@ class _BusInfoPageState extends State<BusInfoPage> {
     );
   }
 
-  Widget appBar() {
+  SliverAppBar appBar({required bool isFullScreen}) {
     return SliverAppBar(
+      forceMaterialTransparency: isFullScreen,
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Colors.transparent,
       floating: true,
-      pinned: false,
-      toolbarHeight: 56,
-      collapsedHeight: 60,
+      pinned: isFullScreen,
       title: Text(
         'Bus Info',
         style: StyleText.bodyLarge(context),
@@ -191,12 +199,44 @@ class _BusInfoPageState extends State<BusInfoPage> {
           valueListenable: isMapStickyTop,
           builder: (context, isSticky, child) => GestureDetector(
             onTap: () => isMapStickyTop.value = !isSticky,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                isSticky ? Icons.map : Icons.map_outlined,
-                size: 30,
-              ),
+            child: Stack(
+              children: [
+                Positioned(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.map,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                ),
+                if (!isSticky)
+                  Positioned(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Transform.rotate(
+                        angle: math.pi / 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                            child: SizedBox(
+                              width: 38,
+                              height: 3,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),

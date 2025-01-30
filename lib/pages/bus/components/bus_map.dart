@@ -14,11 +14,13 @@ class BusMap extends StatefulWidget {
     required this.shouldDrawLine,
     required this.isMapFullScreen,
     required this.isZoomOnMap,
+    this.heroTag,
   });
 
   final ValueNotifier<bool> shouldDrawLine;
   final ValueNotifier<bool> isMapFullScreen;
   final ValueNotifier<bool> isZoomOnMap;
+  final String? heroTag;
 
   @override
   State<BusMap> createState() => _BusMapState();
@@ -47,7 +49,7 @@ class _BusMapState extends State<BusMap> {
       if (hasBeenTouched.value) return;
       if (widget.isZoomOnMap.value) return;
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 150));
       await getMapOnBusLine();
     });
 
@@ -135,74 +137,97 @@ class _BusMapState extends State<BusMap> {
   Widget build(BuildContext context) {
     BusInfoCubit busCubit = context.watch<BusInfoCubit>();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        width: MediaQuery.of(context).size.width,
-        height: widget.isMapFullScreen.value
-            ? MediaQuery.of(context).size.height - 200
-            : (MediaQuery.of(context).size.width / 1.5) + 2,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-          border: Border.all(width: 2, color: Colors.black),
+    return Hero(
+      tag: widget.heroTag ?? '',
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: widget.isMapFullScreen.value ? 0 : 16,
         ),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          width: MediaQuery.of(context).size.width,
+          height: widget.isMapFullScreen.value
+              ? MediaQuery.of(context).size.height
+              : (MediaQuery.of(context).size.width / 1.5) + 2,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            border: widget.isMapFullScreen.value
+                ? null
+                : Border.all(width: 2, color: Colors.black),
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  child: kakaoMap(context),
                 ),
-                child: kakaoMap(context),
               ),
-            ),
-            if (busCubit.state.busId?.busRouteId != null)
+              if (busCubit.state.busId?.busRouteId != null)
+                Positioned(
+                  top: 4,
+                  left: 4,
+                  child: Text(
+                    '현재 : ${busCubit.state.busId?.busRouteNm}번',
+                    style: StyleText.bodyMedium(
+                      context,
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                    ),
+                  ),
+                ),
               Positioned(
-                top: 4,
-                left: 4,
-                child: Text(
-                  '현재 : ${busCubit.state.busId?.busRouteNm}번',
-                  style: StyleText.bodyMedium(
-                    context,
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                  ),
+                right: 0,
+                top: widget.isMapFullScreen.value ? 120 : 0,
+                child: Row(
+                  children: [
+                    IconButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Theme.of(context)
+                              .colorScheme
+                              .primaryContainer
+                              .withAlpha(150),
+                        ),
+                      ),
+                      onPressed: () async {
+                        context.read<MapPointCubit>().resetState();
+                        await getMapOnBusLine();
+                        hasBeenTouched.value = false;
+                        widget.isZoomOnMap.value = false;
+                      },
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      icon: Icon(
+                        Icons.restart_alt,
+                        size: 24,
+                      ),
+                    ),
+                    IconButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Theme.of(context)
+                              .colorScheme
+                              .primaryContainer
+                              .withAlpha(150),
+                        ),
+                      ),
+                      onPressed: () => widget.isMapFullScreen.value =
+                          !widget.isMapFullScreen.value,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      icon: Icon(
+                        widget.isMapFullScreen.value
+                            ? Icons.fullscreen_exit
+                            : Icons.fullscreen,
+                        size: 24,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            Positioned(
-              right: 0,
-              top: 0,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () async {
-                      context.read<MapPointCubit>().resetState();
-                      await getMapOnBusLine();
-                      hasBeenTouched.value = false;
-                      widget.isZoomOnMap.value = false;
-                    },
-                    icon: Icon(
-                      Icons.restart_alt,
-                      size: 24,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => widget.isMapFullScreen.value =
-                        !widget.isMapFullScreen.value,
-                    icon: Icon(
-                      widget.isMapFullScreen.value
-                          ? Icons.fullscreen_exit
-                          : Icons.fullscreen,
-                      size: 24,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
