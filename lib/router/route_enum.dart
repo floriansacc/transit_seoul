@@ -4,6 +4,7 @@ enum RouteEnum {
   map('/map'),
 
   busInfo('/bus-info'),
+  busAroundMe('/bus-around-me'),
 
   settings('/settings'),
   ;

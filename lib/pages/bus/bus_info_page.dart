@@ -174,7 +174,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
       floating: true,
       pinned: isFullScreen,
       title: Text(
-        'Bus Info',
+        '버스 노선 조회',
         style: StyleText.bodyLarge(context),
       ),
       actions: [

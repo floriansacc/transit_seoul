@@ -1,6 +1,7 @@
 import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:transit_seoul/styles/style_text.dart';
 
 class AppBarGeneral extends StatefulWidget implements PreferredSizeWidget {
   const AppBarGeneral({super.key});
@@ -31,7 +32,7 @@ class _AppBarGeneralState extends State<AppBarGeneral> {
       ],
       title: Text(
         'Transit Seoul',
-        style: Theme.of(context).textTheme.bodyLarge,
+        style: StyleText.headlineSmall(context),
       ),
     );
   }

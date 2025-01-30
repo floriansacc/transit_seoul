@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:transit_seoul/pages/bus/bus_around_me.dart';
 import 'package:transit_seoul/pages/bus/bus_info_page.dart';
 import 'package:transit_seoul/pages/bus/bus_page.dart';
 import 'package:transit_seoul/pages/map/map_page.dart';
@@ -137,6 +138,20 @@ final GoRouter _router = GoRouter(
           child: BlocProvider(
             create: (context) => MapPointCubit(),
             child: BusInfoPage(
+              heroTag: extra?['heroTag'],
+            ),
+          ),
+        );
+      },
+    ),
+    GoRoute(
+      path: RouteEnum.busAroundMe.path,
+      pageBuilder: (context, state) {
+        Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
+        return CupertinoPage(
+          child: BlocProvider(
+            create: (context) => MapPointCubit(),
+            child: BusAroundMe(
               heroTag: extra?['heroTag'],
             ),
           ),
