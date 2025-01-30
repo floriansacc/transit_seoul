@@ -54,7 +54,7 @@ class SettingsPage extends StatelessWidget {
                 behavior: HitTestBehavior.translucent,
                 onTap: () => context.read<SettingsCubit>().switchTheme(e),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: AnimatedContainer(
                     duration: Duration(milliseconds: 100),
                     decoration: BoxDecoration(

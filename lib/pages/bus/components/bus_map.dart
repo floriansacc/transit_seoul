@@ -168,13 +168,26 @@ class _BusMapState extends State<BusMap> {
               ),
               if (busCubit.state.busId?.busRouteId != null)
                 Positioned(
-                  top: 4,
+                  top: widget.isMapFullScreen.value ? 132 : 4,
                   left: 4,
-                  child: Text(
-                    '현재 : ${busCubit.state.busId?.busRouteNm}번',
-                    style: StyleText.bodyMedium(
-                      context,
-                      color: Theme.of(context).colorScheme.primaryContainer,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withAlpha(150),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Text(
+                        '현재 : ${busCubit.state.busId?.busRouteNm}번',
+                        style: StyleText.bodyMedium(
+                          context,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
                     ),
                   ),
                 ),

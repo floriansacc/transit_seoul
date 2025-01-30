@@ -101,6 +101,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
               extendBodyBehindAppBar: true,
               appBar: isFullScreen
                   ? AppBar(
+                      foregroundColor: Theme.of(context).primaryColorDark,
                       forceMaterialTransparency: true,
                       centerTitle: true,
                       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -186,7 +187,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
             child: GestureDetector(
               onTap: openSearchModal,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8),
                 child: Icon(
                   Icons.search,
                   size: 30,
@@ -205,7 +206,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: Icon(
                         Icons.map,
                         size: 30,
@@ -220,7 +221,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
                       child: Transform.rotate(
                         angle: math.pi / 4,
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.all(4),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius:
