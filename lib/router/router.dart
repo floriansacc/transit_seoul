@@ -149,11 +149,8 @@ final GoRouter _router = GoRouter(
       pageBuilder: (context, state) {
         Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
         return CupertinoPage(
-          child: BlocProvider(
-            create: (context) => MapPointCubit(),
-            child: BusAroundMe(
-              heroTag: extra?['heroTag'],
-            ),
+          child: BusAroundMe(
+            heroTag: extra?['heroTag'],
           ),
         );
       },
