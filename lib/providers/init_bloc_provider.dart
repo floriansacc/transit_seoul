@@ -9,7 +9,7 @@ class InitBlocProvider {
     return [
       BlocProvider(create: (context) => SettingsCubit()..initializeSettings()),
       BlocProvider(
-        create: (context) => BusInfoCubit(BusService()),
+        create: (context) => BusInfoCubit(BusService())..initializeMap(),
       ),
     ];
   }

@@ -27,8 +27,6 @@ class BusMap extends StatefulWidget {
 }
 
 class _BusMapState extends State<BusMap> {
-  final Key _mapKey = GlobalKey();
-
   KakaoMapController? mapController;
 
   final List<Polyline> polylines = [];
@@ -254,7 +252,7 @@ class _BusMapState extends State<BusMap> {
       zoomControl: settings.state.isMapControl,
       mapTypeControlPosition: ControlPosition.topLeft,
       zoomControlPosition: ControlPosition.left,
-      key: _mapKey,
+      key: context.read<BusInfoCubit>().state.mapKey,
       polylines: polylines,
       markers: [
         for (final CustomMarker e

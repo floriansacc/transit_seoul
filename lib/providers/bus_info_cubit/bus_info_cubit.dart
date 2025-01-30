@@ -16,6 +16,15 @@ class BusInfoCubit extends Cubit<BusInfoState> {
 
   final BusService _repository;
 
+  void initializeMap() {
+    emit(
+      state.copyWith(
+        status: BusInfoStatus.initial,
+        mapKey: GlobalKey(),
+      ),
+    );
+  }
+
   Future<void> getBusRouteInfo(
     int busNumber, {
     required bool getDetails,
