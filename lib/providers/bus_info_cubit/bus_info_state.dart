@@ -16,6 +16,7 @@ class BusInfoState extends Equatable {
     this.busInfo,
     this.routePath,
     this.stationList,
+    this.busPosition,
     this.searchNumber,
     this.mapKey,
   });
@@ -25,6 +26,7 @@ class BusInfoState extends Equatable {
   final BusRouteInfo? busInfo;
   final BusRoutePathList? routePath;
   final BusStationList? stationList;
+  final BusPosition? busPosition;
   final int? searchNumber;
   final Key? mapKey;
 
@@ -34,6 +36,7 @@ class BusInfoState extends Equatable {
     BusRouteInfo? busInfo,
     BusRoutePathList? routePath,
     BusStationList? stationList,
+    BusPosition? busPosition,
     int? searchNumber,
     Key? mapKey,
   }) {
@@ -43,6 +46,7 @@ class BusInfoState extends Equatable {
       busInfo: busInfo ?? this.busInfo,
       routePath: routePath ?? this.routePath,
       stationList: stationList ?? this.stationList,
+      busPosition: busPosition ?? this.busPosition,
       searchNumber: searchNumber ?? this.searchNumber,
       mapKey: mapKey ?? this.mapKey,
     );
@@ -55,6 +59,7 @@ class BusInfoState extends Equatable {
         busInfo,
         routePath,
         stationList,
+        busPosition,
         searchNumber,
         mapKey,
       ];

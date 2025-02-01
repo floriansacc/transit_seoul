@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../styles/logger.dart';
 
 enum ApiType {
-  bus('http://ws.bus.go.kr/api/rest'),
+  busInfo('http://ws.bus.go.kr/api/rest'),
   kakaomap('');
 
   const ApiType(this.url);
@@ -26,7 +26,7 @@ class GlobalService {
     assert(path[0] == '/', 'path require a "/"');
 
     Map<String, String> apiResources = switch (apiUrl) {
-      ApiType.bus => {
+      ApiType.busInfo => {
           'ServiceKey': dataKrKey,
           'resultType': 'json',
         },

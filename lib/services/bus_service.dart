@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:transit_seoul/controllers/api_exception.dart';
 import 'package:transit_seoul/enums/firebase_collection.dart';
 import 'package:transit_seoul/models/bus/bus_id.dart';
+import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/bus/bus_route_path_list.dart';
 import 'package:transit_seoul/models/bus/bus_station_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,13 +35,13 @@ class BusService extends GlobalService {
     }
   }
 
-  Future<BusRouteInfo?> getRouteInfo(int busId) async {
+  Future<BusRouteInfo> getRouteInfo(int busId) async {
     String endpoint = '/busRouteInfo/getRouteInfo?';
 
     try {
       final Response response = await httpRequest(
         HttpMethod.get,
-        apiUrl: ApiType.bus,
+        apiUrl: ApiType.busInfo,
         path: endpoint,
         queryParameters: {'busRouteId': '$busId'},
       );
@@ -58,7 +59,7 @@ class BusService extends GlobalService {
     }
   }
 
-  Future<BusRoutePathList?> getRoutePathList(int busId) async {
+  Future<BusRoutePathList> getRoutePathList(int busId) async {
     String endpoint = '/busRouteInfo/getRoutePath?';
 
     try {
@@ -75,7 +76,7 @@ class BusService extends GlobalService {
       } else {
         final Response response = await httpRequest(
           HttpMethod.get,
-          apiUrl: ApiType.bus,
+          apiUrl: ApiType.busInfo,
           path: endpoint,
           queryParameters: {'busRouteId': '$busId'},
         );
@@ -98,7 +99,7 @@ class BusService extends GlobalService {
     }
   }
 
-  Future<BusStationList?> getStationsByRouteList(int busId) async {
+  Future<BusStationList> getStationsByRouteList(int busId) async {
     String endpoint = '/busRouteInfo/getStaionByRoute?';
 
     try {
@@ -117,7 +118,7 @@ class BusService extends GlobalService {
       // } else {
       final Response response = await httpRequest(
         HttpMethod.get,
-        apiUrl: ApiType.bus,
+        apiUrl: ApiType.busInfo,
         path: endpoint,
         queryParameters: {'busRouteId': '$busId'},
       );
@@ -134,6 +135,32 @@ class BusService extends GlobalService {
 
       return BusStationList.fromJson(json);
       // }
+    } catch (e, s) {
+      errorLog(e, s);
+      rethrow;
+    }
+  }
+
+  Future<BusPosition> getBusPosition(int busId) async {
+    String endpoint = '/buspos/getBusPosByRtid';
+
+    try {
+      final Response response = await httpRequest(
+        HttpMethod.get,
+        apiUrl: ApiType.busInfo,
+        path: endpoint,
+        queryParameters: {
+          'busRouteId': '$busId',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw ApiException(response.statusCode, response.body);
+      }
+
+      final Map<String, dynamic> json = jsonDecode(response.body);
+
+      return BusPosition.fromJson(json);
     } catch (e, s) {
       errorLog(e, s);
       rethrow;

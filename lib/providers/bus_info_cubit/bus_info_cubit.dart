@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:transit_seoul/models/bus/bus_id.dart';
+import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/bus/bus_route_info.dart';
 import 'package:transit_seoul/models/bus/bus_route_path_list.dart';
 import 'package:transit_seoul/models/bus/bus_station_list.dart';
@@ -93,21 +94,35 @@ class BusInfoCubit extends Cubit<BusInfoState> {
           await _repository.getRoutePathList(busId);
       BusStationList? stationList =
           await _repository.getStationsByRouteList(busId);
+      BusPosition? busPosition = await _repository.getBusPosition(busId);
 
-      if (routePathList == null || stationList == null) {
-        logger.i('no detailed info for bus number $busId');
-        emit(state.copyWith(status: BusInfoStatus.success));
-      } else {
-        emit(
-          state.copyWith(
-            status: BusInfoStatus.success,
-            routePath: routePathList,
-            stationList: stationList,
-          ),
-        );
-      }
+      emit(
+        state.copyWith(
+          status: BusInfoStatus.success,
+          routePath: routePathList,
+          stationList: stationList,
+          busPosition: busPosition,
+        ),
+      );
     } catch (e, s) {
       logger.e('error getbusDetails', error: e, stackTrace: s);
+      emit(state.copyWith(status: BusInfoStatus.fail));
+    }
+  }
+
+  Future<void> refreshBusPosition(int busId) async {
+    emit(state.copyWith(status: BusInfoStatus.loading));
+    try {
+      BusPosition? busPosition = await _repository.getBusPosition(busId);
+
+      emit(
+        state.copyWith(
+          status: BusInfoStatus.success,
+          busPosition: busPosition,
+        ),
+      );
+    } catch (e, s) {
+      logger.e('error getBusPosition', error: e, stackTrace: s);
       emit(state.copyWith(status: BusInfoStatus.fail));
     }
   }
