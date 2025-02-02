@@ -1,5 +1,5 @@
 PODS:
-  - cloud_firestore (5.6.1):
+  - cloud_firestore (5.6.2):
     - Firebase/Firestore (= 11.6.0)
     - firebase_core
     - Flutter
@@ -11,10 +11,10 @@ PODS:
   - Firebase/Storage (11.6.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 11.6.0)
-  - firebase_core (3.10.0):
+  - firebase_core (3.10.1):
     - Firebase/CoreOnly (= 11.6.0)
     - Flutter
-  - firebase_storage (12.4.0):
+  - firebase_storage (12.4.1):
     - Firebase/Storage (= 11.6.0)
     - firebase_core
     - Flutter
@@ -162,10 +162,10 @@ CHECKOUT OPTIONS:
     :tag: 11.6.0
 
 SPEC CHECKSUMS:
-  cloud_firestore: f02547e5b28138821eb44a48e3c5f034ebb5411b
+  cloud_firestore: d1ec4183fa44c06b38ca55d8723abe930468ee0d
   Firebase: 374a441a91ead896215703a674d58cdb3e9d772b
-  firebase_core: feb37e79f775c2bd08dd35e02d83678291317e10
-  firebase_storage: f976f1db24f7bcfdba40777be217dc65a27e98a9
+  firebase_core: e2aa06dbd854d961f8ce46c2e20933bee1bf2d2b
+  firebase_storage: 5f8f929f2b1a4f3d37d32ef6b8c474db40bfbe13
   FirebaseAppCheckInterop: 2376d3ec5cb4267facad4fe754ab4f301a5a519b
   FirebaseAuthInterop: a6973d72aa242ea88ffb6be9c9b06c65455071da
   FirebaseCore: 48b0dd707581cf9c1a1220da68223fb0a562afaa
@@ -192,7 +192,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
-  webview_flutter_wkwebview: 0982481e3d9c78fd5c6f62a002fcd24fc791f1e4
+  webview_flutter_wkwebview: a4af96a051138e28e29f60101d094683b9f82188
 
 PODFILE CHECKSUM: e427e8433d73e8b710559609c79b921e2ac83243
 

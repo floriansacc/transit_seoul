@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -7,6 +8,7 @@ import 'package:transit_seoul/components/custom_card.dart';
 import 'package:transit_seoul/components/custom_search_bar.dart';
 import 'package:transit_seoul/components/custom_text_form_field.dart';
 import 'package:transit_seoul/enums/color_type.dart';
+import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/bus/bus_station_list.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
@@ -79,7 +81,6 @@ class _BusStopListState extends State<BusStopList> {
               ? Theme.of(context).colorScheme.errorContainer
               : Theme.of(context).colorScheme.primaryContainer,
           content: Column(
-            spacing: 20,
             children: [
               if (busCubit.state.status.isSuccess && stationList.isEmpty)
                 emptyStation(context, busCubit)
@@ -101,6 +102,7 @@ class _BusStopListState extends State<BusStopList> {
                     onTapSearch: validateSearch,
                   ),
                 ),
+                Gap(20),
                 for (final (int i, StationListItem station)
                     in stationList.indexed) ...[
                   if (station.stationNm.contains(searchValue))
@@ -108,7 +110,13 @@ class _BusStopListState extends State<BusStopList> {
                       context,
                       station,
                       mapPointCubit: mapPointCubit,
-                      isLast: stationList.length - 1 == i,
+                      isFirst: i == 0,
+                      // isBusComing:
+                      //     busCubit.state.nextStationsIndex?.contains(i) == true,
+                      busPos: busCubit.state.busPosition?.msgBody.itemList
+                          .firstWhereOrNull(
+                        (e) => e.nextStId == station.stationNo,
+                      ),
                     ),
                 ],
               ],
@@ -123,105 +131,116 @@ class _BusStopListState extends State<BusStopList> {
     BuildContext context,
     StationListItem station, {
     required MapPointCubit mapPointCubit,
-    required bool isLast,
+    required bool isFirst,
+    // required bool isBusComing,
+    required BusPositionItem? busPos,
   }) {
     bool isSelected = mapPointCubit.state.marker
             ?.any((e) => e.markerId == station.stationNo) ==
         true;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: isLast
-              ? BorderSide.none
-              : BorderSide(
-                  width: 1,
+    return Column(
+      children: [
+        Row(
+          children: [
+            if (busPos != null) busComing(busPos),
+            SizedBox(height: 24),
+            if (!isFirst)
+              Flexible(
+                child: Container(
+                  width: double.infinity,
+                  height: 1,
                   color: Theme.of(context)
                       .colorScheme
                       .onPrimaryContainer
                       .withAlpha(100),
                 ),
+              ),
+          ],
         ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Flexible(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 8,
-              children: [
-                Row(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Gap(24),
+            Flexible(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 8,
                   children: [
-                    Flexible(
-                      child: Text(
-                        '${station.stationNm} ${station.stationNm}',
-                        style: StyleText.bodyLarge(context),
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            '${station.stationNm} ${station.stationNm}',
+                            style: StyleText.bodyLarge(context),
+                          ),
+                        ),
+                        Gap(8),
+                      ],
                     ),
-                    Gap(8),
+                    Row(
+                      spacing: 12,
+                      children: [
+                        if (station.beginTm != ':') ...[
+                          Text(
+                            '${station.beginTm}~${station.lastTm}',
+                            style: StyleText.labelSmall(context),
+                          ),
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer
+                                  .withAlpha(100),
+                            ),
+                            child: SizedBox(
+                              width: 1,
+                              height: 15,
+                            ),
+                          ),
+                        ],
+                        Text(
+                          '${station.stationNo}',
+                          style: StyleText.labelSmall(context),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-                Row(
-                  spacing: 12,
-                  children: [
-                    if (station.beginTm != ':') ...[
-                      Text(
-                        '${station.beginTm}~${station.lastTm}',
-                        style: StyleText.labelSmall(context),
-                      ),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimaryContainer
-                              .withAlpha(100),
-                        ),
-                        child: SizedBox(
-                          width: 1,
-                          height: 15,
-                        ),
-                      ),
-                    ],
-                    Text(
-                      '${station.stationNo}',
-                      style: StyleText.labelSmall(context),
-                    ),
-                  ],
-                ),
-                if (!isLast) Gap(8),
-              ],
+              ),
             ),
-          ),
-          Flexible(
-            flex: 2,
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () => zoomToStop(station),
-                  icon: Icon(Icons.location_on),
-                ),
-                Flexible(
-                  child: ConfirmButton(
-                    description: isSelected ? '제거' : '표시',
-                    borderSide: isSelected
-                        ? BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                          )
-                        : BorderSide.none,
-                    onTap: () async => displayStationOnMap(station),
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    height: 48,
+            Flexible(
+              flex: 2,
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => zoomToStop(station),
+                    icon: Icon(Icons.location_on),
                   ),
-                ),
-              ],
+                  Flexible(
+                    child: ConfirmButton(
+                      description: isSelected ? '제거' : '표시',
+                      borderSide: isSelected
+                          ? BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
+                            )
+                          : BorderSide.none,
+                      onTap: () async => displayStationOnMap(station),
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      height: 48,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -233,6 +252,22 @@ class _BusStopListState extends State<BusStopList> {
             '${busCubit.state.busId?.busRouteNm}번 버스에 해당되는 정류장이 없습니다.',
             style: StyleText.bodyLarge(context, colorType: ColorType.error),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget busComing(BusPositionItem bus) {
+    return Row(
+      children: [
+        Icon(
+          Icons.bus_alert,
+          size: 24,
+        ),
+        Gap(8),
+        Text(
+          '${bus.nextStTm}분 - ${bus.congetion.description}',
+          style: StyleText.labelSmall(context),
         ),
       ],
     );

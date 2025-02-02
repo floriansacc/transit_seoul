@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
+import 'package:transit_seoul/enums/bus_congestion_enum.dart';
 import 'package:transit_seoul/models/bus/bus_msg_header.dart';
 
 class BusPosition {
@@ -80,7 +82,7 @@ class BusPositionItem {
   final double posX;
   final double posY;
   final int lastStnId;
-  final int congetion;
+  final BusCongestionEnum congetion;
   final int nextStId;
 
   static BusPositionItem fromJson(Map<String, dynamic> json) {
@@ -106,7 +108,10 @@ class BusPositionItem {
       posX: PublicMethod.parseDouble(json['posX']),
       posY: PublicMethod.parseDouble(json['posY']),
       lastStnId: PublicMethod.parseInt(json['lastStnId']),
-      congetion: PublicMethod.parseInt(json['congetion']),
+      congetion: BusCongestionEnum.values.firstWhereOrNull(
+            (e) => e.number == PublicMethod.parseInt(json['congetion']),
+          ) ??
+          BusCongestionEnum.empty,
       nextStId: PublicMethod.parseInt(json['nextStId']),
     );
   }

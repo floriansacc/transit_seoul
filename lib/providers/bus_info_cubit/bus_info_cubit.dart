@@ -96,12 +96,15 @@ class BusInfoCubit extends Cubit<BusInfoState> {
           await _repository.getStationsByRouteList(busId);
       BusPosition? busPosition = await _repository.getBusPosition(busId);
 
+      List<int> nextStops = getIndexOfBusPosition();
+
       emit(
         state.copyWith(
           status: BusInfoStatus.success,
           routePath: routePathList,
           stationList: stationList,
           busPosition: busPosition,
+          nextStationsIndex: nextStops,
         ),
       );
     } catch (e, s) {
@@ -125,5 +128,19 @@ class BusInfoCubit extends Cubit<BusInfoState> {
       logger.e('error getBusPosition', error: e, stackTrace: s);
       emit(state.copyWith(status: BusInfoStatus.fail));
     }
+  }
+
+  List<int> getIndexOfBusPosition() {
+    List<int> result = [];
+
+    for (final BusPositionItem e in state.busPosition?.msgBody.itemList ?? []) {
+      int stationId = (state.stationList?.msgBody.itemList ?? [])
+          .indexWhere((stop) => stop.stationNo == e.nextStId);
+      if (stationId >= 0) {
+        result.add(stationId);
+      }
+    }
+
+    return result;
   }
 }

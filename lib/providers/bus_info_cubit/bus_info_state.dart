@@ -19,6 +19,7 @@ class BusInfoState extends Equatable {
     this.busPosition,
     this.searchNumber,
     this.mapKey,
+    this.nextStationsIndex,
   });
 
   final BusInfoStatus status;
@@ -29,6 +30,7 @@ class BusInfoState extends Equatable {
   final BusPosition? busPosition;
   final int? searchNumber;
   final Key? mapKey;
+  final List<int>? nextStationsIndex;
 
   BusInfoState copyWith({
     BusInfoStatus? status,
@@ -39,6 +41,7 @@ class BusInfoState extends Equatable {
     BusPosition? busPosition,
     int? searchNumber,
     Key? mapKey,
+    List<int>? nextStationsIndex,
   }) {
     return BusInfoState(
       status: status ?? this.status,
@@ -49,6 +52,7 @@ class BusInfoState extends Equatable {
       busPosition: busPosition ?? this.busPosition,
       searchNumber: searchNumber ?? this.searchNumber,
       mapKey: mapKey ?? this.mapKey,
+      nextStationsIndex: nextStationsIndex ?? this.nextStationsIndex,
     );
   }
 
@@ -62,5 +66,6 @@ class BusInfoState extends Equatable {
         busPosition,
         searchNumber,
         mapKey,
+        nextStationsIndex,
       ];
 }

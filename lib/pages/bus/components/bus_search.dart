@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit_seoul/components/custom_search_bar.dart';
 import 'package:transit_seoul/components/custom_text_form_field.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
+import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 
 class BusSearch extends StatefulWidget {
   const BusSearch({
@@ -38,13 +39,17 @@ class _BusSearchState extends State<BusSearch> {
         int.parse(searchController.value.text),
         getDetails: true,
       );
+      // TODO check when API works
+      await context
+          .read<MapPointCubit>()
+          .addBusPositon(busCubit.state.busPosition?.msgBody.itemList ?? []);
       if (busCubit.state.status.isSuccess) {
         widget.shouldDrawLine.value = true;
       }
     }
     if (!mounted) throw Exception();
 
-    if (context.read<BusInfoCubit>().state.status.isSuccess) {
+    if (busCubit.state.status.isSuccess) {
       searchController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
     }

@@ -247,6 +247,8 @@ class _BusMapState extends State<BusMap> {
   KakaoMap kakaoMap(BuildContext context) {
     final SettingsCubit settings = context.read<SettingsCubit>();
 
+    final MapPointCubit mapPointCubit = context.watch<MapPointCubit>();
+
     return KakaoMap(
       mapTypeControl: settings.state.isMapControl,
       zoomControl: settings.state.isMapControl,
@@ -255,9 +257,8 @@ class _BusMapState extends State<BusMap> {
       key: context.read<BusInfoCubit>().state.mapKey,
       polylines: polylines,
       markers: [
-        for (final CustomMarker e
-            in context.watch<MapPointCubit>().state.marker ?? [])
-          e.marker,
+        ...(mapPointCubit.state.busMarker ?? []),
+        for (final CustomMarker e in mapPointCubit.state.marker ?? []) e.marker,
       ],
       onMapCreated: (controller) {
         mapController = controller;
