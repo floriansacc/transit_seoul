@@ -72,7 +72,7 @@ class _BusMapState extends State<BusMap> {
 
   Future<void> zoomOnCoordinates(List<LatLng> coordinateList) async {
     await mapController?.fitBounds(coordinateList);
-    await mapController?.setLevel(4);
+    await mapController?.setLevel(5);
   }
 
   Future<void> getMapOnBusLine() async {

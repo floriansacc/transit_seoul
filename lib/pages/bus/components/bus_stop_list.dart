@@ -115,7 +115,7 @@ class _BusStopListState extends State<BusStopList> {
                       //     busCubit.state.nextStationsIndex?.contains(i) == true,
                       busPos: busCubit.state.busPosition?.msgBody.itemList
                           .firstWhereOrNull(
-                        (e) => e.nextStId == station.stationNo,
+                        (e) => e.sectionId == station.section,
                       ),
                     ),
                 ],
@@ -141,23 +141,7 @@ class _BusStopListState extends State<BusStopList> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            if (busPos != null) busComing(busPos),
-            SizedBox(height: 24),
-            if (!isFirst)
-              Flexible(
-                child: Container(
-                  width: double.infinity,
-                  height: 1,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onPrimaryContainer
-                      .withAlpha(100),
-                ),
-              ),
-          ],
-        ),
+        busComing(busPos, isFirst: isFirst),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -165,7 +149,7 @@ class _BusStopListState extends State<BusStopList> {
             Flexible(
               flex: 4,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.only(top: 8, bottom: 32),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 8,
@@ -174,7 +158,7 @@ class _BusStopListState extends State<BusStopList> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${station.stationNm} ${station.stationNm}',
+                            station.stationNm,
                             style: StyleText.bodyLarge(context),
                           ),
                         ),
@@ -257,17 +241,68 @@ class _BusStopListState extends State<BusStopList> {
     );
   }
 
-  Widget busComing(BusPositionItem bus) {
-    return Row(
+  Widget busComing(BusPositionItem? bus, {required bool isFirst}) {
+    return Column(
+      spacing: 6,
       children: [
-        Icon(
-          Icons.bus_alert,
-          size: 24,
-        ),
-        Gap(8),
-        Text(
-          '${bus.nextStTm}분 - ${bus.congetion.description}',
-          style: StyleText.labelSmall(context),
+        if (!isFirst)
+          Container(
+            width: double.infinity,
+            height: 1,
+            color:
+                Theme.of(context).colorScheme.onPrimaryContainer.withAlpha(100),
+          ),
+        Row(
+          children: [
+            Stack(
+              children: [
+                SizedBox(
+                  height: 20,
+                  width: 20,
+                ),
+                if (bus != null)
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Icon(
+                        Icons.bus_alert,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
+                      if (bus.islastyn)
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 1,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: Center(
+                              child: Text(
+                                '막',
+                                style: StyleText.labelSmall(
+                                  context,
+                                  colorType: ColorType.error,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      Text(
+                        '${bus.nextStTm}분 - ${bus.congetion.description}',
+                        style: StyleText.labelSmall(context),
+                      ),
+                      Gap(8),
+                      //  if (!isFirst)
+                    ],
+                  ),
+              ],
+            ),
+          ],
         ),
       ],
     );

@@ -200,6 +200,10 @@ class _BusDetailsState extends State<BusDetails> {
             '첫차 시간: ${firstBusTime.hour}시${firstBusTime.minute != 0 ? ' ${firstBusTime.minute}분' : ''}',
             style: bodyStyle,
           ),
+        Text(
+          '운영 버스 수 (현재):${busCubit.state.busPosition?.msgBody.itemList.length}',
+          style: bodyStyle,
+        ),
         if (lastBusTime != null)
           Row(
             spacing: 8,

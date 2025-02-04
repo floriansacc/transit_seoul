@@ -113,8 +113,14 @@ class BusInfoCubit extends Cubit<BusInfoState> {
     }
   }
 
-  Future<void> refreshBusPosition(int busId) async {
-    emit(state.copyWith(status: BusInfoStatus.loading));
+  Future<void> refreshBusPosition() async {
+    int? busId = state.busId?.busRouteId;
+
+    if (busId == null) {
+      emit(state.copyWith(status: BusInfoStatus.fail));
+      return;
+    }
+
     try {
       BusPosition? busPosition = await _repository.getBusPosition(busId);
 

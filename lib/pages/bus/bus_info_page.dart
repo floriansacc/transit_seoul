@@ -158,6 +158,11 @@ class _BusInfoPageState extends State<BusInfoPage> {
                   ],
                 ),
               ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () =>
+                    context.read<BusInfoCubit>().refreshBusPosition(),
+                child: Icon(Icons.restore),
+              ),
             ),
           ),
         ),
