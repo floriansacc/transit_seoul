@@ -136,7 +136,7 @@ final GoRouter _router = GoRouter(
         Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
         return CupertinoPage(
           child: BlocProvider(
-            create: (context) => MapPointCubit(),
+            create: (context) => MapPointCubit()..addBusPositon(context),
             child: BusInfoPage(
               heroTag: extra?['heroTag'],
             ),

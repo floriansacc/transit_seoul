@@ -38,12 +38,14 @@ class _BusDetailsState extends State<BusDetails> {
             BusInfoStatus.loading =>
               Theme.of(context).colorScheme.secondaryContainer,
             BusInfoStatus.fail => Theme.of(context).colorScheme.errorContainer,
+            BusInfoStatus.refresh =>
+              Theme.of(context).colorScheme.primaryContainer,
             BusInfoStatus.success =>
               Theme.of(context).colorScheme.primaryContainer,
           },
           content: Column(
             spacing: 12,
-            crossAxisAlignment: busStatus.isInitial || busStatus.isLoading
+            crossAxisAlignment: busStatus.isInitial || (busStatus.isLoading)
                 ? CrossAxisAlignment.center
                 : CrossAxisAlignment.start,
             children: [
@@ -85,7 +87,7 @@ class _BusDetailsState extends State<BusDetails> {
                   style: StyleText.titleMedium(context),
                 ),
                 AnimatedDot(),
-              ] else if (busStatus.isSuccess) ...[
+              ] else if (busStatus.isSuccess || busStatus.isRefresh) ...[
                 successBody(context, busCubit),
               ],
             ],

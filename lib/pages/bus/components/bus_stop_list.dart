@@ -69,7 +69,7 @@ class _BusStopListState extends State<BusStopList> {
     List<StationListItem> stationList =
         busCubit.state.stationList?.msgBody.itemList ?? [];
 
-    if (!busCubit.state.status.isSuccess) {
+    if (!busCubit.state.status.isSuccess && !busCubit.state.status.isRefresh) {
       return SizedBox();
     }
 

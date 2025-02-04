@@ -1,10 +1,11 @@
 part of 'bus_info_cubit.dart';
 
-enum BusInfoStatus { initial, loading, success, fail }
+enum BusInfoStatus { initial, loading, refresh, success, fail }
 
 extension BusInfoStatusX on BusInfoStatus {
   bool get isInitial => this == BusInfoStatus.initial;
   bool get isLoading => this == BusInfoStatus.loading;
+  bool get isRefresh => this == BusInfoStatus.refresh;
   bool get isSuccess => this == BusInfoStatus.success;
   bool get isFailed => this == BusInfoStatus.fail;
 }

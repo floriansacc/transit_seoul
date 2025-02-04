@@ -18,15 +18,15 @@ class MapPointState extends Equatable {
   });
 
   final MapPointStatus status;
-  final List<CustomMarker>? marker;
+  final Set<CustomMarker>? marker;
   final LatLng? zoomCoordinates;
-  final List<Marker>? busMarker;
+  final Set<Marker>? busMarker;
 
   MapPointState copyWith({
     MapPointStatus? status,
-    List<CustomMarker>? marker,
+    Set<CustomMarker>? marker,
     LatLng? zoomCoordinates,
-    List<Marker>? busMarker,
+    Set<Marker>? busMarker,
   }) {
     return MapPointState(
       status: status ?? this.status,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
+import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/bus/bus_route_path_list.dart';
 import 'package:transit_seoul/models/kakao/custom_marker.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
@@ -71,7 +72,7 @@ class _BusMapState extends State<BusMap> {
   }
 
   Future<void> zoomOnCoordinates(List<LatLng> coordinateList) async {
-    await mapController?.fitBounds(coordinateList);
+    mapController?.fitBounds(coordinateList);
     await mapController?.setLevel(5);
   }
 
@@ -100,34 +101,31 @@ class _BusMapState extends State<BusMap> {
       }
     }
 
-    // setState(() {});
     await mapController?.fitBounds([
       LatLng(minLat, minLng),
       LatLng(maxLat, maxLng),
     ]);
+    setState(() {});
   }
 
   Future<void> drawBusLine() async {
     List<RoutePathListItem> routePath =
         context.read<BusInfoCubit>().state.routePath?.msgBody.itemList ?? [];
 
-    for (final (int i, RoutePathListItem e) in routePath.indexed) {
-      if (i > 0 && i % 2 == 0) {
-        polylines.add(
-          Polyline(
-            strokeWidth: 2,
-            strokeColor: Colors.black,
-            strokeOpacity: 0.6,
-            strokeStyle: StrokeStyle.solid,
-            polylineId: '${e.no}',
-            points: [
-              LatLng(e.gpsY, e.gpsX),
-              LatLng(routePath[i - 1].gpsY, routePath[i - 1].gpsX),
-            ],
-          ),
-        );
-      }
-    }
+    if (routePath.isEmpty) return;
+
+    polylines.add(
+      Polyline(
+        strokeWidth: 2,
+        strokeColor: Colors.black,
+        strokeOpacity: 0.6,
+        strokeStyle: StrokeStyle.solid,
+        polylineId: '${routePath.first.no}',
+        points: [
+          for (final (RoutePathListItem e) in routePath) LatLng(e.gpsY, e.gpsX),
+        ],
+      ),
+    );
     await getMapOnBusLine();
   }
 
@@ -135,109 +133,122 @@ class _BusMapState extends State<BusMap> {
   Widget build(BuildContext context) {
     BusInfoCubit busCubit = context.watch<BusInfoCubit>();
 
-    return Hero(
-      tag: widget.heroTag ?? '',
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: widget.isMapFullScreen.value ? 0 : 16,
-        ),
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          width: MediaQuery.of(context).size.width,
-          height: widget.isMapFullScreen.value
-              ? MediaQuery.of(context).size.height
-              : (MediaQuery.of(context).size.width / 1.5) + 2,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-            border: widget.isMapFullScreen.value
-                ? null
-                : Border.all(width: 2, color: Colors.black),
+    return BlocListener<BusInfoCubit, BusInfoState>(
+      listener: (context, state) {
+        if (state.status.isSuccess) {
+          List<BusPositionItem> busList =
+              state.busPosition?.msgBody.itemList ?? [];
+          if (busList.isEmpty) return;
+
+          mapController?.clearMarker();
+          context.read<MapPointCubit>().addBusPositon(context);
+        }
+      },
+      child: Hero(
+        tag: widget.heroTag ?? '',
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isMapFullScreen.value ? 0 : 16,
           ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Container(
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  child: kakaoMap(context),
-                ),
-              ),
-              if (busCubit.state.busId?.busRouteId != null)
-                Positioned(
-                  top: widget.isMapFullScreen.value ? 132 : 4,
-                  left: 4,
-                  child: DecoratedBox(
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            width: MediaQuery.of(context).size.width,
+            height: widget.isMapFullScreen.value
+                ? MediaQuery.of(context).size.height
+                : (MediaQuery.of(context).size.width / 1.5) + 2,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              border: widget.isMapFullScreen.value
+                  ? null
+                  : Border.all(width: 2, color: Colors.black),
+            ),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withAlpha(150),
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: Text(
-                        '현재 : ${busCubit.state.busId?.busRouteNm}번',
-                        style: StyleText.bodyMedium(
-                          context,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
+                    child: kakaoMap(context),
+                  ),
+                ),
+                if (busCubit.state.busId?.busRouteId != null)
+                  Positioned(
+                    top: widget.isMapFullScreen.value ? 132 : 4,
+                    left: 4,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primaryContainer
+                            .withAlpha(150),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2),
+                        child: Text(
+                          '현재 : ${busCubit.state.busId?.busRouteNm}번',
+                          style: StyleText.bodyMedium(
+                            context,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              Positioned(
-                right: 0,
-                top: widget.isMapFullScreen.value ? 120 : 0,
-                child: Row(
-                  children: [
-                    IconButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context)
-                              .colorScheme
-                              .primaryContainer
-                              .withAlpha(150),
+                Positioned(
+                  right: 0,
+                  top: widget.isMapFullScreen.value ? 120 : 0,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withAlpha(150),
+                          ),
+                        ),
+                        onPressed: () async {
+                          context.read<MapPointCubit>().resetCustomMarker();
+                          await getMapOnBusLine();
+                          hasBeenTouched.value = false;
+                          widget.isZoomOnMap.value = false;
+                        },
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        icon: Icon(
+                          Icons.restart_alt,
+                          size: 24,
                         ),
                       ),
-                      onPressed: () async {
-                        context.read<MapPointCubit>().resetState();
-                        await getMapOnBusLine();
-                        hasBeenTouched.value = false;
-                        widget.isZoomOnMap.value = false;
-                      },
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      icon: Icon(
-                        Icons.restart_alt,
-                        size: 24,
-                      ),
-                    ),
-                    IconButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context)
-                              .colorScheme
-                              .primaryContainer
-                              .withAlpha(150),
+                      IconButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withAlpha(150),
+                          ),
+                        ),
+                        onPressed: () => widget.isMapFullScreen.value =
+                            !widget.isMapFullScreen.value,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        icon: Icon(
+                          widget.isMapFullScreen.value
+                              ? Icons.fullscreen_exit
+                              : Icons.fullscreen,
+                          size: 24,
                         ),
                       ),
-                      onPressed: () => widget.isMapFullScreen.value =
-                          !widget.isMapFullScreen.value,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      icon: Icon(
-                        widget.isMapFullScreen.value
-                            ? Icons.fullscreen_exit
-                            : Icons.fullscreen,
-                        size: 24,
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -249,6 +260,8 @@ class _BusMapState extends State<BusMap> {
 
     final MapPointCubit mapPointCubit = context.watch<MapPointCubit>();
 
+    Set<Marker> busMarker = mapPointCubit.state.busMarker ?? {};
+
     return KakaoMap(
       mapTypeControl: settings.state.isMapControl,
       zoomControl: settings.state.isMapControl,
@@ -257,13 +270,11 @@ class _BusMapState extends State<BusMap> {
       key: context.read<BusInfoCubit>().state.mapKey,
       polylines: polylines,
       markers: [
-        ...(mapPointCubit.state.busMarker ?? []),
+        ...busMarker,
         for (final CustomMarker e in mapPointCubit.state.marker ?? []) e.marker,
       ],
       onMapCreated: (controller) {
         mapController = controller;
-
-        setState(() {});
 
         List<RoutePathListItem> routePath =
             context.read<BusInfoCubit>().state.routePath?.msgBody.itemList ??

@@ -43,9 +43,7 @@ class _BusSearchState extends State<BusSearch> {
       );
       if (!context.mounted) throw Exception();
 
-      await context
-          .read<MapPointCubit>()
-          .addBusPositon(busCubit.state.busPosition?.msgBody.itemList ?? []);
+      await context.read<MapPointCubit>().addBusPositon(context);
       if (busCubit.state.status.isSuccess) {
         widget.shouldDrawLine.value = true;
       }
