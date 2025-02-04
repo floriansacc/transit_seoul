@@ -6,6 +6,7 @@ import 'package:transit_seoul/pages/bus/components/bus_map.dart';
 import 'package:transit_seoul/pages/bus/components/bus_search.dart';
 import 'package:transit_seoul/pages/bus/components/bus_stop_list.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
+import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/styles/style_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,7 +76,10 @@ class _BusInfoPageState extends State<BusInfoPage> {
         spacing: 12,
         mainAxisSize: MainAxisSize.min,
         children: [
-          BusSearch(shouldDrawLine: shouldDrawLine),
+          BlocProvider(
+            create: (context) => MapPointCubit(),
+            child: BusSearch(isModal: true, shouldDrawLine: shouldDrawLine),
+          ),
           ConfirmButton(
             description: '닫기',
             onTap: () => Navigator.of(context).pop(),
@@ -121,6 +125,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
                       appBar(isFullScreen: isFullScreen),
                       SliverToBoxAdapter(
                         child: BusSearch(
+                          isModal: false,
                           shouldDrawLine: shouldDrawLine,
                           focusNode: searchFocusNode,
                         ),

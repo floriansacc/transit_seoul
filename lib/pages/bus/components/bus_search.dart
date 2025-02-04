@@ -11,10 +11,12 @@ class BusSearch extends StatefulWidget {
     super.key,
     required this.shouldDrawLine,
     this.focusNode,
+    required this.isModal,
   });
 
   final ValueNotifier<bool> shouldDrawLine;
   final FocusNode? focusNode;
+  final bool isModal;
 
   @override
   State<BusSearch> createState() => _BusSearchState();
@@ -31,7 +33,7 @@ class _BusSearchState extends State<BusSearch> {
     super.dispose();
   }
 
-  Future<void> validateSearch() async {
+  Future<void> validateSearch(BuildContext context) async {
     widget.shouldDrawLine.value = false;
     BusInfoCubit busCubit = context.read<BusInfoCubit>();
     if (_formKey.currentState!.validate()) {
@@ -39,7 +41,8 @@ class _BusSearchState extends State<BusSearch> {
         int.parse(searchController.value.text),
         getDetails: true,
       );
-      // TODO check when API works
+      if (!context.mounted) throw Exception();
+
       await context
           .read<MapPointCubit>()
           .addBusPositon(busCubit.state.busPosition?.msgBody.itemList ?? []);
@@ -52,6 +55,9 @@ class _BusSearchState extends State<BusSearch> {
     if (busCubit.state.status.isSuccess) {
       searchController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
+    }
+    if (widget.isModal) {
+      Navigator.of(context, rootNavigator: true).pop();
     }
   }
 
@@ -88,7 +94,7 @@ class _BusSearchState extends State<BusSearch> {
                   }
                 },
               ),
-              onTapSearch: () async => validateSearch(),
+              onTapSearch: () async => validateSearch(context),
             ),
           ],
         ),
