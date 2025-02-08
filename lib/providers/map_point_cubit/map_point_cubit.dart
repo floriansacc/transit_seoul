@@ -64,8 +64,8 @@ class MapPointCubit extends Cubit<MapPointState> {
       Marker marker = Marker(
         markerId: '${bus.vehId}',
         latLng: LatLng(bus.gpsY, bus.gpsX),
-        width: 30,
-        height: 30,
+        width: 20,
+        height: 20,
         markerImageSrc:
             'https://cdn0.iconfinder.com/data/icons/geo-points/154/bus-512.png',
         infoWindowRemovable: true,

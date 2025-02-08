@@ -136,6 +136,7 @@ class _BusInfoPageState extends State<BusInfoPage> {
                       valueListenable: isMapStickyTop,
                       builder: (context, isSticky, child) => SliverStickyHeader(
                         header: BusMap(
+                          scrollController: scrollController,
                           heroTag: widget.heroTag,
                           shouldDrawLine: shouldDrawLine,
                           isMapFullScreen: isMapFullScreen,

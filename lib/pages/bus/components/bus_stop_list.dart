@@ -110,6 +110,7 @@ class _BusStopListState extends State<BusStopList> {
                       context,
                       station,
                       mapPointCubit: mapPointCubit,
+                      busCubit: busCubit,
                       isFirst: i == 0,
                       // isBusComing:
                       //     busCubit.state.nextStationsIndex?.contains(i) == true,
@@ -131,6 +132,7 @@ class _BusStopListState extends State<BusStopList> {
     BuildContext context,
     StationListItem station, {
     required MapPointCubit mapPointCubit,
+    required BusInfoCubit busCubit,
     required bool isFirst,
     // required bool isBusComing,
     required BusPositionItem? busPos,
@@ -141,7 +143,7 @@ class _BusStopListState extends State<BusStopList> {
 
     return Column(
       children: [
-        busComing(busPos, isFirst: isFirst),
+        busComing(busPos, busCubit: busCubit, isFirst: isFirst),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -241,8 +243,15 @@ class _BusStopListState extends State<BusStopList> {
     );
   }
 
-  Widget busComing(BusPositionItem? bus, {required bool isFirst}) {
+  Widget busComing(
+    BusPositionItem? bus, {
+    required BusInfoCubit busCubit,
+    required bool isFirst,
+  }) {
     return Column(
+      key: busCubit.state.busPosKey
+          .firstWhereOrNull((key) => key.index == bus?.vehId)
+          ?.globalKey,
       spacing: 6,
       children: [
         if (!isFirst)

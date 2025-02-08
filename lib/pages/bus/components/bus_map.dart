@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
@@ -16,12 +17,14 @@ class BusMap extends StatefulWidget {
     required this.isMapFullScreen,
     required this.isZoomOnMap,
     this.heroTag,
+    required this.scrollController,
   });
 
   final ValueNotifier<bool> shouldDrawLine;
   final ValueNotifier<bool> isMapFullScreen;
   final ValueNotifier<bool> isZoomOnMap;
   final String? heroTag;
+  final ScrollController scrollController;
 
   @override
   State<BusMap> createState() => _BusMapState();
@@ -170,7 +173,7 @@ class _BusMapState extends State<BusMap> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
-                    child: kakaoMap(context),
+                    child: kakaoMap(context, busCubit),
                   ),
                 ),
                 if (busCubit.state.busId?.busRouteId != null)
@@ -255,7 +258,7 @@ class _BusMapState extends State<BusMap> {
     );
   }
 
-  KakaoMap kakaoMap(BuildContext context) {
+  KakaoMap kakaoMap(BuildContext context, BusInfoCubit busCubit) {
     final SettingsCubit settings = context.read<SettingsCubit>();
 
     final MapPointCubit mapPointCubit = context.watch<MapPointCubit>();
@@ -273,7 +276,46 @@ class _BusMapState extends State<BusMap> {
         ...busMarker,
         for (final CustomMarker e in mapPointCubit.state.marker ?? []) e.marker,
       ],
-      onMapCreated: (controller) {
+      onMarkerTap: (String markerId, LatLng latLng, int zoomLevel) {
+        GlobalKey? clickedBusKey = busCubit.state.busPosKey
+            .firstWhereOrNull((e) => e.index == int.parse(markerId))
+            ?.globalKey;
+
+        Size phoneSize = MediaQuery.of(context).size;
+
+        if (clickedBusKey == null) return;
+
+        final double clickedBusYPos =
+            (clickedBusKey.currentContext!.findRenderObject() as RenderBox)
+                .localToGlobal(Offset.zero)
+                .dy;
+
+        if (clickedBusYPos > (phoneSize.width / 1.5) + 2 + 120 &&
+            clickedBusYPos < phoneSize.height - 200) {
+          debugPrint('bus already in viewport');
+          return;
+        }
+
+        // double offsetToAdd = clickedBusYPos < (phoneSize.width / 1.5) + 2 + 120
+        //     ? widget.scrollController.offset + (phoneSize.width / 1.5) + 200
+        //     : widget.scrollController.offset - (phoneSize.width / 1.5) - 200;
+
+        // print(offsetToAdd);
+
+        Scrollable.ensureVisible(
+          clickedBusKey.currentContext!,
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeIn,
+        );
+        Future.delayed(Duration(milliseconds: 450), () {
+          widget.scrollController.animateTo(
+            widget.scrollController.offset - (phoneSize.width / 1.5) - 200,
+            duration: Duration(milliseconds: 100),
+            curve: Curves.easeOut,
+          );
+        });
+      },
+      onMapCreated: (KakaoMapController controller) {
         mapController = controller;
 
         List<RoutePathListItem> routePath =
@@ -284,12 +326,12 @@ class _BusMapState extends State<BusMap> {
           drawBusLine();
         }
       },
-      onDragChangeCallback: (latLng, zoomLevel, dragType) {
+      onDragChangeCallback: (LatLng latLng, int zoomLevel, DragType dragType) {
         if (!hasBeenTouched.value) {
           hasBeenTouched.value = true;
         }
       },
-      onMapTap: (latLng) {},
+      onMapTap: (LatLng latLng) {},
       center: LatLng(
         37.526126,
         126.922255,

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:transit_seoul/models/bus/bus_custom_key.dart';
 import 'package:transit_seoul/models/bus/bus_id.dart';
 import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/bus/bus_route_info.dart';
@@ -96,15 +97,22 @@ class BusInfoCubit extends Cubit<BusInfoState> {
           await _repository.getStationsByRouteList(busId);
       BusPosition? busPosition = await _repository.getBusPosition(busId);
 
-      List<int> nextStops = getIndexOfBusPosition();
+      emit(
+        state.copyWith(
+          routePath: routePathList,
+          stationList: stationList,
+          busPosition: busPosition,
+        ),
+      );
+
+      // List<int> nextStops = getIndexOfBusPosition();
+      List<BusCustomKey> busPosKeys = generateBusPositionKey();
 
       emit(
         state.copyWith(
           status: BusInfoStatus.success,
-          routePath: routePathList,
-          stationList: stationList,
-          busPosition: busPosition,
-          nextStationsIndex: nextStops,
+          // nextStationsIndex: nextStops,
+          busPosKey: busPosKeys,
         ),
       );
     } catch (e, s) {
@@ -131,23 +139,48 @@ class BusInfoCubit extends Cubit<BusInfoState> {
           busPosition: busPosition,
         ),
       );
+
+      List<BusCustomKey> busPosKeys = generateBusPositionKey();
+
+      emit(
+        state.copyWith(
+          status: BusInfoStatus.success,
+          busPosKey: busPosKeys,
+        ),
+      );
     } catch (e, s) {
       logger.e('error getBusPosition', error: e, stackTrace: s);
       emit(state.copyWith(status: BusInfoStatus.fail));
     }
   }
 
-  List<int> getIndexOfBusPosition() {
-    List<int> result = [];
+  // List<int> getIndexOfBusPosition() {
+  //   List<int> result = [];
+
+  //   for (final BusPositionItem e in state.busPosition?.msgBody.itemList ?? []) {
+  //     int stationId = (state.stationList?.msgBody.itemList ?? [])
+  //         .indexWhere((stop) => stop.stationNo == e.nextStId);
+  //     if (stationId >= 0) {
+  //       result.add(stationId);
+  //     }
+  //   }
+
+  //   return result;
+  // }
+
+  List<BusCustomKey> generateBusPositionKey() {
+    List<BusCustomKey> keys = [];
 
     for (final BusPositionItem e in state.busPosition?.msgBody.itemList ?? []) {
-      int stationId = (state.stationList?.msgBody.itemList ?? [])
-          .indexWhere((stop) => stop.stationNo == e.nextStId);
-      if (stationId >= 0) {
-        result.add(stationId);
-      }
+      keys.add(BusCustomKey(index: e.vehId, globalKey: GlobalKey()));
     }
-
-    return result;
+    return keys;
+    // return List.generate(
+    //   state.busPosition?.msgBody.itemList.length ?? 0,
+    //   (index) => BusCustomKey(
+    //     index: index,
+    //     globalKey: GlobalKey(),
+    //   ),
+    // );
   }
 }
