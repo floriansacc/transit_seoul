@@ -18,13 +18,15 @@ class BusMap extends StatefulWidget {
     required this.isZoomOnMap,
     this.heroTag,
     required this.scrollController,
+    required this.clickedBusCoord,
   });
 
+  final String? heroTag;
+  final ScrollController scrollController;
   final ValueNotifier<bool> shouldDrawLine;
   final ValueNotifier<bool> isMapFullScreen;
   final ValueNotifier<bool> isZoomOnMap;
-  final String? heroTag;
-  final ScrollController scrollController;
+  final ValueNotifier<LatLng?> clickedBusCoord;
 
   @override
   State<BusMap> createState() => _BusMapState();
@@ -62,6 +64,11 @@ class _BusMapState extends State<BusMap> {
       if (coordinates != null) {
         await zoomOnCoordinates([coordinates]);
       }
+    });
+
+    widget.clickedBusCoord.addListener(() async {
+      if (widget.clickedBusCoord.value == null) return;
+      mapController?.fitBounds([widget.clickedBusCoord.value!]);
     });
   }
 

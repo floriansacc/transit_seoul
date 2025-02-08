@@ -18,9 +18,11 @@ class BusStopList extends StatefulWidget {
   const BusStopList({
     super.key,
     required this.isZoomOnMap,
+    required this.clickedBusCoord,
   });
 
   final ValueNotifier<bool> isZoomOnMap;
+  final ValueNotifier<LatLng?> clickedBusCoord;
 
   @override
   State<BusStopList> createState() => _BusStopListState();
@@ -248,72 +250,81 @@ class _BusStopListState extends State<BusStopList> {
     required BusInfoCubit busCubit,
     required bool isFirst,
   }) {
-    return Column(
+    return InkWell(
+      onTap: () {
+        if (bus == null) return;
+        widget.clickedBusCoord.value = LatLng(bus.gpsY, bus.gpsX);
+      },
       key: busCubit.state.busPosKey
           .firstWhereOrNull((key) => key.index == bus?.vehId)
           ?.globalKey,
-      spacing: 6,
-      children: [
-        if (!isFirst)
-          Container(
-            width: double.infinity,
-            height: 1,
-            color:
-                Theme.of(context).colorScheme.onPrimaryContainer.withAlpha(100),
-          ),
-        Row(
-          children: [
-            Stack(
-              children: [
-                SizedBox(
-                  height: 20,
-                  width: 20,
-                ),
-                if (bus != null)
-                  Row(
-                    spacing: 8,
-                    children: [
-                      Icon(
-                        Icons.bus_alert,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
-                      if (bus.islastyn)
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.error,
+      child: Column(
+        spacing: 6,
+        children: [
+          if (!isFirst)
+            Container(
+              width: double.infinity,
+              height: 1,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onPrimaryContainer
+                  .withAlpha(100),
+            ),
+          Row(
+            children: [
+              Stack(
+                children: [
+                  SizedBox(
+                    height: 20,
+                    width: 20,
+                  ),
+                  if (bus != null)
+                    Row(
+                      spacing: 8,
+                      children: [
+                        Icon(
+                          Icons.bus_alert,
+                          size: 20,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                        if (bus.islastyn)
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                width: 1,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
                             ),
-                          ),
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: Center(
-                              child: Text(
-                                '막',
-                                style: StyleText.labelSmall(
-                                  context,
-                                  colorType: ColorType.error,
+                            child: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: Center(
+                                child: Text(
+                                  '막',
+                                  style: StyleText.labelSmall(
+                                    context,
+                                    colorType: ColorType.error,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+                        Text(
+                          '${bus.nextStTm}분 - ${bus.congetion.description}',
+                          style: StyleText.labelSmall(context),
                         ),
-                      Text(
-                        '${bus.nextStTm}분 - ${bus.congetion.description}',
-                        style: StyleText.labelSmall(context),
-                      ),
-                      Gap(8),
-                      //  if (!isFirst)
-                    ],
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ],
+                        Gap(8),
+                        //  if (!isFirst)
+                      ],
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:transit_seoul/components/confirm_button.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/pages/bus/components/bus_details.dart';
@@ -37,6 +38,8 @@ class _BusInfoPageState extends State<BusInfoPage> {
   final ValueNotifier<bool> shouldDrawLine = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isMapFullScreen = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isZoomOnMap = ValueNotifier<bool>(false);
+
+  final ValueNotifier<LatLng?> clickedBusCoord = ValueNotifier(null);
 
   @override
   void initState() {
@@ -136,11 +139,12 @@ class _BusInfoPageState extends State<BusInfoPage> {
                       valueListenable: isMapStickyTop,
                       builder: (context, isSticky, child) => SliverStickyHeader(
                         header: BusMap(
-                          scrollController: scrollController,
                           heroTag: widget.heroTag,
+                          scrollController: scrollController,
                           shouldDrawLine: shouldDrawLine,
                           isMapFullScreen: isMapFullScreen,
                           isZoomOnMap: isZoomOnMap,
+                          clickedBusCoord: clickedBusCoord,
                         ),
                         sticky: isSticky,
                         sliver: SliverList(
@@ -153,7 +157,10 @@ class _BusInfoPageState extends State<BusInfoPage> {
                                 children: [
                                   Gap(16),
                                   BusDetails(),
-                                  BusStopList(isZoomOnMap: isZoomOnMap),
+                                  BusStopList(
+                                    isZoomOnMap: isZoomOnMap,
+                                    clickedBusCoord: clickedBusCoord,
+                                  ),
                                 ],
                               ),
                             ),
