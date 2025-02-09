@@ -1,11 +1,13 @@
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:transit_seoul/components/confirm_button.dart';
+import 'package:transit_seoul/components/sample_header_delegate.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/pages/bus/components/bus_details.dart';
 import 'package:transit_seoul/pages/bus/components/bus_map.dart';
 import 'package:transit_seoul/pages/bus/components/bus_search.dart';
 import 'package:transit_seoul/pages/bus/components/bus_stop_list.dart';
+import 'package:transit_seoul/pages/bus/components/bus_stop_search.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/styles/style_text.dart';
@@ -31,6 +33,8 @@ class _BusInfoPageState extends State<BusInfoPage> {
   final ScrollController scrollController = ScrollController();
 
   FocusNode searchFocusNode = FocusNode();
+
+  final ValueNotifier<String> searchText = ValueNotifier('');
 
   final ValueNotifier<bool> displayActions = ValueNotifier<bool>(false);
   final ValueNotifier<bool> isMapStickyTop = ValueNotifier<bool>(true);
@@ -81,7 +85,10 @@ class _BusInfoPageState extends State<BusInfoPage> {
         children: [
           BlocProvider(
             create: (context) => MapPointCubit(),
-            child: BusSearch(isModal: true, shouldDrawLine: shouldDrawLine),
+            child: BusSearch(
+              isModal: true,
+              shouldDrawLine: shouldDrawLine,
+            ),
           ),
           ConfirmButton(
             description: '닫기',
@@ -135,10 +142,11 @@ class _BusInfoPageState extends State<BusInfoPage> {
                       ),
                       SliverGap(16),
                     ],
-                    ValueListenableBuilder(
-                      valueListenable: isMapStickyTop,
-                      builder: (context, isSticky, child) => SliverStickyHeader(
-                        header: BusMap(
+                    SliverPersistentHeader(
+                      pinned: true,
+                      // floating: true,
+                      delegate: SampleHeaderDelegate(
+                        child: BusMap(
                           heroTag: widget.heroTag,
                           scrollController: scrollController,
                           shouldDrawLine: shouldDrawLine,
@@ -146,31 +154,37 @@ class _BusInfoPageState extends State<BusInfoPage> {
                           isZoomOnMap: isZoomOnMap,
                           clickedBusCoord: clickedBusCoord,
                         ),
-                        sticky: isSticky,
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate([
-                            Visibility(
-                              visible: !isFullScreen,
-                              maintainState: true,
-                              child: Column(
-                                spacing: 16,
-                                children: [
-                                  Gap(16),
-                                  BusDetails(),
-                                  BusStopList(
-                                    isZoomOnMap: isZoomOnMap,
-                                    clickedBusCoord: clickedBusCoord,
-                                  ),
-                                ],
-                              ),
+                        minHeight: isFullScreen
+                            ? MediaQuery.of(context).size.height
+                            : (MediaQuery.of(context).size.width / 1.5) + 2,
+                        maxHeight: isFullScreen
+                            ? MediaQuery.of(context).size.height
+                            : (MediaQuery.of(context).size.width / 1.5) + 2,
+                      ),
+                    ),
+                    SliverGap(16),
+                    SliverToBoxAdapter(child: BusDetails()),
+                    SliverStickyHeader(
+                      header: BusStopSearch(searchText: searchText),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          Visibility(
+                            visible: !isFullScreen,
+                            maintainState: true,
+                            child: BusStopList(
+                              searchText: searchText,
+                              isZoomOnMap: isZoomOnMap,
+                              clickedBusCoord: clickedBusCoord,
                             ),
-                          ]),
-                        ),
+                          ),
+                        ]),
                       ),
                     ),
                   ],
                 ),
               ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.startFloat,
               floatingActionButton: FloatingActionButton(
                 onPressed: () async {
                   await context.read<BusInfoCubit>().refreshBusPosition();
@@ -179,6 +193,12 @@ class _BusInfoPageState extends State<BusInfoPage> {
               ),
             ),
           ),
+        ),
+        PublicMethod.nextButtonIosKeyboard(
+          context,
+          displayCondition: searchFocusNode.hasFocus,
+          onTapFuction: () => FocusManager.instance.primaryFocus?.unfocus(),
+          buttonText: '닫기',
         ),
       ],
     );

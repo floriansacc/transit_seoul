@@ -65,36 +65,31 @@ class _BusSearchState extends State<BusSearch> {
       key: _formKey,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          spacing: 12,
-          children: [
-            CustomSearchBar(
-              textFormField: CustomTextFormField(
-                focusNode: widget.focusNode,
-                controller: searchController,
-                hintText: '버스 번호...',
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.number,
-                masks: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                onChange: (_) {
-                  if (searchController.text.length == 1) {
-                    _formKey.currentState!.validate();
-                  }
-                },
-                validator: (String? value) {
-                  {
-                    if (value == null || value.isEmpty) {
-                      return '버스 번호를 입력하세요.';
-                    }
-                    return null;
-                  }
-                },
-              ),
-              onTapSearch: () async => validateSearch(context),
-            ),
-          ],
+        child: CustomSearchBar(
+          textFormField: CustomTextFormField(
+            focusNode: widget.focusNode,
+            controller: searchController,
+            hintText: '버스 번호...',
+            textInputAction: TextInputAction.done,
+            keyboardType: TextInputType.number,
+            masks: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+            onChange: (_) {
+              if (searchController.text.length == 1) {
+                _formKey.currentState!.validate();
+              }
+            },
+            validator: (String? value) {
+              {
+                if (value == null || value.isEmpty) {
+                  return '버스 번호를 입력하세요.';
+                }
+                return null;
+              }
+            },
+          ),
+          onTapSearch: () async => validateSearch(context),
         ),
       ),
     );

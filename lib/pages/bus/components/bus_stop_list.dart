@@ -5,8 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:transit_seoul/components/confirm_button.dart';
 import 'package:transit_seoul/components/custom_card.dart';
-import 'package:transit_seoul/components/custom_search_bar.dart';
-import 'package:transit_seoul/components/custom_text_form_field.dart';
 import 'package:transit_seoul/enums/color_type.dart';
 import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/bus/bus_station_list.dart';
@@ -19,8 +17,10 @@ class BusStopList extends StatefulWidget {
     super.key,
     required this.isZoomOnMap,
     required this.clickedBusCoord,
+    required this.searchText,
   });
 
+  final ValueNotifier<String> searchText;
   final ValueNotifier<bool> isZoomOnMap;
   final ValueNotifier<LatLng?> clickedBusCoord;
 
@@ -29,26 +29,6 @@ class BusStopList extends StatefulWidget {
 }
 
 class _BusStopListState extends State<BusStopList> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  TextEditingController textController = TextEditingController();
-  FocusNode focusNode = FocusNode();
-
-  ValueNotifier<String> searchText = ValueNotifier<String>('');
-
-  @override
-  void dispose() {
-    textController.dispose();
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  void validateSearch() {
-    if (_formKey.currentState!.validate()) {
-      searchText.value = textController.text;
-    }
-  }
-
   Future<void> displayStationOnMap(StationListItem station) async {
     await context.read<MapPointCubit>().addMarker(
           markerId: station.stationNo,
@@ -76,7 +56,7 @@ class _BusStopListState extends State<BusStopList> {
     }
 
     return ValueListenableBuilder(
-      valueListenable: searchText,
+      valueListenable: widget.searchText,
       builder: (context, searchValue, child) {
         return CustomCard(
           bgColor: busCubit.state.status.isSuccess && stationList.isEmpty
@@ -87,23 +67,6 @@ class _BusStopListState extends State<BusStopList> {
               if (busCubit.state.status.isSuccess && stationList.isEmpty)
                 emptyStation(context, busCubit)
               else ...[
-                Form(
-                  key: _formKey,
-                  child: CustomSearchBar(
-                    buttonBgColor: StyleText.getColorContainer(
-                      context,
-                      colorType: ColorType.secondary,
-                    ),
-                    textFormField: CustomTextFormField(
-                      hintText: '정류장 검색...',
-                      borderColor:
-                          Theme.of(context).colorScheme.onInverseSurface,
-                      controller: textController,
-                      textInputAction: TextInputAction.done,
-                    ),
-                    onTapSearch: validateSearch,
-                  ),
-                ),
                 Gap(20),
                 for (final (int i, StationListItem station)
                     in stationList.indexed) ...[

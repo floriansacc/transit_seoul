@@ -298,7 +298,7 @@ class _BusMapState extends State<BusMap> {
                 .dy;
 
         if (clickedBusYPos > (phoneSize.width / 1.5) + 2 + 120 &&
-            clickedBusYPos < phoneSize.height - 200) {
+            clickedBusYPos < phoneSize.height - 300) {
           debugPrint('bus already in viewport');
           return;
         }
@@ -316,7 +316,7 @@ class _BusMapState extends State<BusMap> {
         );
         Future.delayed(Duration(milliseconds: 450), () {
           widget.scrollController.animateTo(
-            widget.scrollController.offset - (phoneSize.width / 1.5) - 200,
+            widget.scrollController.offset - (phoneSize.width / 1.5),
             duration: Duration(milliseconds: 100),
             curve: Curves.easeOut,
           );
