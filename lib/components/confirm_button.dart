@@ -5,7 +5,7 @@ class ConfirmButton extends StatelessWidget {
     super.key,
     required this.description,
     this.textStyle,
-    required this.onTap,
+    this.onTap,
     this.verticalPaddingModifier,
     this.horizontalPaddingModifier,
     this.color,
@@ -16,7 +16,7 @@ class ConfirmButton extends StatelessWidget {
 
   final String description;
   final TextStyle? textStyle;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final double? verticalPaddingModifier;
   final double? horizontalPaddingModifier;
   final Color? color;

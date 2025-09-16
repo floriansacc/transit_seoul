@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:transit_seoul/components/custom_main_card.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/router/route_enum.dart';
-import 'package:flutter/material.dart';
 
 class BusPage extends StatefulWidget {
   const BusPage({
@@ -16,6 +16,11 @@ class BusPage extends StatefulWidget {
 }
 
 class _BusPageState extends State<BusPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(

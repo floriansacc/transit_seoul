@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:transit_seoul/pages/bus/bus_around_me.dart';
 import 'package:transit_seoul/pages/bus/bus_info_page.dart';
 import 'package:transit_seoul/pages/bus/bus_page.dart';
@@ -7,9 +10,6 @@ import 'package:transit_seoul/pages/metro/metro_page.dart';
 import 'package:transit_seoul/pages/settings/settings_page.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/router/route_enum.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../pages/home_page.dart';
 
@@ -109,7 +109,11 @@ final GoRouter _router = GoRouter(
               path: RouteEnum.map.path,
               pageBuilder: (context, state) {
                 return CustomTransitionPage(
-                  child: MapPage(),
+                  child: BlocProvider(
+                    create: (context) =>
+                        MapPointCubit()..addBusPositon(context),
+                    child: MapPage(),
+                  ),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(

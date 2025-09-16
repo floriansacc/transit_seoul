@@ -1,7 +1,8 @@
-import 'package:transit_seoul/components/animated_page_wrapper.dart';
-import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:transit_seoul/components/animated_page_wrapper.dart';
+import 'package:transit_seoul/router/route_enum.dart';
+
 import '../components/app_bar_general.dart';
 
 class HomePage extends StatefulWidget {
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
         children: widget.children,
       ),
       bottomNavigationBar: NavigationBar(
+        height: 50,
         destinations: [
           NavigationDestination(
             selectedIcon: Icon(Icons.home),

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 
 class AnimatedPageWrapperSlide extends StatelessWidget {
   const AnimatedPageWrapperSlide({
@@ -74,11 +74,11 @@ class AnimatedPageWrapperOpacity extends StatelessWidget {
       children: children.mapIndexed(
         (int index, Widget navigator) {
           return AnimatedScale(
-            scale: index == currentIndex ? 1 : 0.9,
-            duration: const Duration(milliseconds: 200),
+            scale: index == currentIndex ? 1 : 0.995,
+            duration: const Duration(milliseconds: 125),
             child: AnimatedOpacity(
               opacity: index == currentIndex ? 1 : 0,
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 1),
               child: _branchNavigatorWrapper(index, navigator),
             ),
           );

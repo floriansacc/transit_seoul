@@ -42,6 +42,9 @@ dependencies:
   flutter_launcher_icons: ^0.14.3
   flutter_sticky_header: ^0.8.0
   flutter_svg: ^2.0.17
+  pointer_interceptor: ^0.10.1+2
+  carousel_slider: ^5.1.1
+  riverpod: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +56,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  riverpod_lint: ^3.0.0
+  custom_lint: ^0.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

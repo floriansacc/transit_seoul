@@ -6,23 +6,25 @@ import 'package:transit_seoul/components/custom_text_form_field.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 
-class BusSearch extends StatefulWidget {
-  const BusSearch({
+class MapSearch extends StatefulWidget {
+  const MapSearch({
     super.key,
-    required this.shouldDrawLine,
     this.focusNode,
+    required this.shouldDrawLine,
     required this.isModal,
+    this.isSearchOpen,
   });
 
-  final ValueNotifier<bool> shouldDrawLine;
   final FocusNode? focusNode;
+  final ValueNotifier<bool> shouldDrawLine;
   final bool isModal;
+  final ValueNotifier<bool>? isSearchOpen;
 
   @override
-  State<BusSearch> createState() => _BusSearchState();
+  State<MapSearch> createState() => _MapSearchState();
 }
 
-class _BusSearchState extends State<BusSearch> {
+class _MapSearchState extends State<MapSearch> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController searchController = TextEditingController();
@@ -53,8 +55,12 @@ class _BusSearchState extends State<BusSearch> {
     if (busCubit.state.status.isSuccess) {
       searchController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
+
+      if (widget.isSearchOpen != null) {
+        widget.isSearchOpen!.value = !widget.isSearchOpen!.value;
+      }
     }
-    if (widget.isModal) {
+    if (widget.isModal && context.mounted) {
       Navigator.of(context, rootNavigator: true).pop();
     }
   }
@@ -64,7 +70,7 @@ class _BusSearchState extends State<BusSearch> {
     return Form(
       key: _formKey,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.only(left: 30, right: 8),
         child: CustomSearchBar(
           textFormField: CustomTextFormField(
             focusNode: widget.focusNode,
