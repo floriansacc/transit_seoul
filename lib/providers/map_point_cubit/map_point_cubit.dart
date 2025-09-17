@@ -1,10 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kakao_map_plugin/kakao_map_plugin.dart';
 import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/models/kakao/custom_marker.dart';
-import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 
 part 'map_point_state.dart';
 
@@ -41,10 +39,8 @@ class MapPointCubit extends Cubit<MapPointState> {
     Set<CustomMarker> newList = state.marker ?? {};
 
     if (newList.any((e) => e.markerId == markerId)) {
-      debugPrint('remove marker $markerName');
       newList.removeWhere((e) => e.markerId == markerId);
     } else {
-      debugPrint('add marker $markerName');
       newList.add(markerItem);
     }
 
@@ -55,9 +51,9 @@ class MapPointCubit extends Cubit<MapPointState> {
     emit(state.copyWith(zoomCoordinates: coordinates));
   }
 
-  Future<void> addBusPositon(BuildContext context) async {
-    List<BusPositionItem> buses =
-        context.read<BusInfoCubit>().state.busPosition?.msgBody.itemList ?? [];
+  Future<void> addBusPositon(List<BusPositionItem>? buses) async {
+    if (buses == null) return;
+
     Set<Marker> markers = {};
 
     for (final BusPositionItem bus in buses) {

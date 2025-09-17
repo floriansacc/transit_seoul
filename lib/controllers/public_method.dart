@@ -98,7 +98,7 @@ class PublicMethod {
     );
   }
 
-  static modalSingleButton(
+  static void modalSingleButton(
     BuildContext? context, {
     bool dismissible = true,
     EdgeInsets modalPadding = const EdgeInsets.symmetric(horizontal: 20),

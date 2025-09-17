@@ -221,7 +221,7 @@ class _MapPageState extends State<MapPage> {
                 if (busList.isEmpty) return;
 
                 mapController.clearMarker();
-                context.read<MapPointCubit>().addBusPositon(context);
+                context.read<MapPointCubit>().addBusPositon(busList);
               }
             },
             child: BlocBuilder<MapPointCubit, MapPointState>(

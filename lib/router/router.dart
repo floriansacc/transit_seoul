@@ -110,8 +110,7 @@ final GoRouter _router = GoRouter(
               pageBuilder: (context, state) {
                 return CustomTransitionPage(
                   child: BlocProvider(
-                    create: (context) =>
-                        MapPointCubit()..addBusPositon(context),
+                    create: (context) => MapPointCubit()..addBusPositon(null),
                     child: MapPage(),
                   ),
                   transitionsBuilder:
@@ -140,7 +139,7 @@ final GoRouter _router = GoRouter(
         Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
         return CupertinoPage(
           child: BlocProvider(
-            create: (context) => MapPointCubit()..addBusPositon(context),
+            create: (context) => MapPointCubit()..addBusPositon(null),
             child: BusInfoPage(
               heroTag: extra?['heroTag'],
             ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit_seoul/components/custom_search_bar.dart';
 import 'package:transit_seoul/components/custom_text_form_field.dart';
+import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 
@@ -43,7 +44,10 @@ class _BusSearchState extends State<BusSearch> {
       );
       if (!context.mounted) throw Exception();
 
-      await context.read<MapPointCubit>().addBusPositon(context);
+      List<BusPositionItem> busList =
+          busCubit.state.busPosition?.msgBody.itemList ?? [];
+
+      await context.read<MapPointCubit>().addBusPositon(busList);
       if (busCubit.state.status.isSuccess) {
         widget.shouldDrawLine.value = true;
       }
@@ -54,7 +58,7 @@ class _BusSearchState extends State<BusSearch> {
       searchController.clear();
       FocusManager.instance.primaryFocus?.unfocus();
     }
-    if (widget.isModal) {
+    if (widget.isModal && context.mounted) {
       Navigator.of(context, rootNavigator: true).pop();
     }
   }

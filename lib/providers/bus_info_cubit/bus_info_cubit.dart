@@ -1,4 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
+// ignore: avoid_flutter_imports
+import 'package:flutter/material.dart';
 import 'package:transit_seoul/models/bus/bus_custom_key.dart';
 import 'package:transit_seoul/models/bus/bus_id.dart';
 import 'package:transit_seoul/models/bus/bus_position.dart';
@@ -7,9 +11,6 @@ import 'package:transit_seoul/models/bus/bus_route_path_list.dart';
 import 'package:transit_seoul/models/bus/bus_station_list.dart';
 import 'package:transit_seoul/services/bus_service.dart';
 import 'package:transit_seoul/styles/logger.dart';
-import 'package:collection/collection.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 part 'bus_info_state.dart';
 
@@ -105,8 +106,11 @@ class BusInfoCubit extends Cubit<BusInfoState> {
         ),
       );
 
-      // List<int> nextStops = getIndexOfBusPosition();
-      List<BusCustomKey> busPosKeys = generateBusPositionKey();
+      List<BusCustomKey> busPosKeys = [
+        for (final BusPositionItem e
+            in state.busPosition?.msgBody.itemList ?? [])
+          BusCustomKey(index: e.vehId, globalKey: GlobalKey()),
+      ];
 
       emit(
         state.copyWith(
@@ -140,7 +144,11 @@ class BusInfoCubit extends Cubit<BusInfoState> {
         ),
       );
 
-      List<BusCustomKey> busPosKeys = generateBusPositionKey();
+      List<BusCustomKey> busPosKeys = [
+        for (final BusPositionItem e
+            in state.busPosition?.msgBody.itemList ?? [])
+          BusCustomKey(index: e.vehId, globalKey: GlobalKey()),
+      ];
 
       emit(
         state.copyWith(
@@ -168,19 +176,19 @@ class BusInfoCubit extends Cubit<BusInfoState> {
   //   return result;
   // }
 
-  List<BusCustomKey> generateBusPositionKey() {
-    List<BusCustomKey> keys = [];
+  // List<BusCustomKey> generateBusPositionKey() {
+  //   List<BusCustomKey> keys = [];
 
-    for (final BusPositionItem e in state.busPosition?.msgBody.itemList ?? []) {
-      keys.add(BusCustomKey(index: e.vehId, globalKey: GlobalKey()));
-    }
-    return keys;
-    // return List.generate(
-    //   state.busPosition?.msgBody.itemList.length ?? 0,
-    //   (index) => BusCustomKey(
-    //     index: index,
-    //     globalKey: GlobalKey(),
-    //   ),
-    // );
-  }
+  //   for (final BusPositionItem e in state.busPosition?.msgBody.itemList ?? []) {
+  //     keys.add(BusCustomKey(index: e.vehId, globalKey: GlobalKey()));
+  //   }
+  //   return keys;
+  //   // return List.generate(
+  //   //   state.busPosition?.msgBody.itemList.length ?? 0,
+  //   //   (index) => BusCustomKey(
+  //   //     index: index,
+  //   //     globalKey: GlobalKey(),
+  //   //   ),
+  //   // );
+  // }
 }

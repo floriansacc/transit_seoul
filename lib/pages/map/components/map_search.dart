@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit_seoul/components/custom_search_bar.dart';
 import 'package:transit_seoul/components/custom_text_form_field.dart';
+import 'package:transit_seoul/models/bus/bus_position.dart';
 import 'package:transit_seoul/providers/bus_info_cubit/bus_info_cubit.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 
@@ -44,8 +45,10 @@ class _MapSearchState extends State<MapSearch> {
         getDetails: true,
       );
       if (!context.mounted) throw Exception();
+      List<BusPositionItem> busList =
+          busCubit.state.busPosition?.msgBody.itemList ?? [];
 
-      await context.read<MapPointCubit>().addBusPositon(context);
+      await context.read<MapPointCubit>().addBusPositon(busList);
       if (busCubit.state.status.isSuccess) {
         widget.shouldDrawLine.value = true;
       }

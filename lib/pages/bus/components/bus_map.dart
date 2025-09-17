@@ -151,7 +151,8 @@ class _BusMapState extends State<BusMap> {
           if (busList.isEmpty) return;
 
           mapController?.clearMarker();
-          context.read<MapPointCubit>().addBusPositon(context);
+
+          context.read<MapPointCubit>().addBusPositon(busList);
         }
       },
       child: Hero(
