@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:transit_seoul/app.dart';
 import 'package:transit_seoul/pages/bus/bus_around_me.dart';
 import 'package:transit_seoul/pages/bus/bus_info_page.dart';
 import 'package:transit_seoul/pages/bus/bus_page.dart';
 import 'package:transit_seoul/pages/map/map_page.dart';
 import 'package:transit_seoul/pages/metro/metro_page.dart';
+import 'package:transit_seoul/pages/my/my_page.dart';
 import 'package:transit_seoul/pages/settings/settings_page.dart';
 import 'package:transit_seoul/providers/map_point_cubit/map_point_cubit.dart';
 import 'package:transit_seoul/router/route_enum.dart';
@@ -26,8 +28,12 @@ final GlobalKey<NavigatorState> _mapNavigatorKey =
 
 final GoRouter _router = GoRouter(
   navigatorKey: navigatorKey,
-  initialLocation: RouteEnum.home.path,
+  initialLocation: RouteEnum.app.path,
   routes: [
+    GoRoute(
+      path: RouteEnum.app.path,
+      builder: (context, state) => App(),
+    ),
     StatefulShellRoute(
       parentNavigatorKey: navigatorKey,
       navigatorContainerBuilder: (context, navigationShell, children) {
@@ -79,6 +85,40 @@ final GoRouter _router = GoRouter(
                   },
                 );
               },
+              routes: [
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: RouteEnum.busInfo.path
+                      .replaceAll(RouteEnum.home.path, ''),
+                  pageBuilder: (context, state) {
+                    Map<String, dynamic>? extra =
+                        state.extra as Map<String, dynamic>?;
+                    return CupertinoPage(
+                      child: BlocProvider(
+                        create: (context) =>
+                            MapPointCubit()..addBusPositon(null),
+                        child: BusInfoPage(
+                          heroTag: extra?['heroTag'],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                GoRoute(
+                  parentNavigatorKey: navigatorKey,
+                  path: RouteEnum.busAroundMe.path
+                      .replaceAll(RouteEnum.home.path, ''),
+                  pageBuilder: (context, state) {
+                    Map<String, dynamic>? extra =
+                        state.extra as Map<String, dynamic>?;
+                    return CupertinoPage(
+                      child: BusAroundMe(
+                        heroTag: extra?['heroTag'],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
@@ -128,34 +168,15 @@ final GoRouter _router = GoRouter(
       ],
     ),
     GoRoute(
+      path: RouteEnum.my.path,
+      pageBuilder: (context, state) {
+        return CupertinoPage(child: MyPage());
+      },
+    ),
+    GoRoute(
       path: RouteEnum.settings.path,
       pageBuilder: (context, state) {
         return CupertinoPage(child: SettingsPage());
-      },
-    ),
-    GoRoute(
-      path: RouteEnum.busInfo.path,
-      pageBuilder: (context, state) {
-        Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
-        return CupertinoPage(
-          child: BlocProvider(
-            create: (context) => MapPointCubit()..addBusPositon(null),
-            child: BusInfoPage(
-              heroTag: extra?['heroTag'],
-            ),
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouteEnum.busAroundMe.path,
-      pageBuilder: (context, state) {
-        Map<String, dynamic>? extra = state.extra as Map<String, dynamic>?;
-        return CupertinoPage(
-          child: BusAroundMe(
-            heroTag: extra?['heroTag'],
-          ),
-        );
       },
     ),
   ],

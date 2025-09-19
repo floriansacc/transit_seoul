@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:transit_seoul/components/animated_page_wrapper.dart';
+import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/router/route_enum.dart';
 
 import '../components/app_bar_general.dart';
@@ -26,6 +27,26 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     controllerBus = ScrollController(keepScrollOffset: false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Map<String, dynamic>? extra = widget.navigationShell.shellRouteContext
+          .routerState.extra as Map<String, dynamic>?;
+
+      bool? isLogout = extra?['isLogout'];
+
+      if (isLogout == true) {
+        PublicMethod.modalSingleButton(
+          context,
+          title: '로그아웃되었습니다',
+          description: '오랫동안 접속하지 않아 로그아웃되었습니다.\n 모든 기능을 이용하시려면 로그인하시기 바랍니다.',
+          buttonText: '마이로 이동하기',
+          onTap: () {
+            PublicMethod.pushPage(context, RouteEnum.my);
+            Navigator.of(context, rootNavigator: true).pop();
+          },
+        );
+      }
+    });
   }
 
   @override

@@ -1,8 +1,8 @@
-import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit_seoul/controllers/public_method.dart';
 import 'package:transit_seoul/enums/settings_enum.dart';
 import 'package:transit_seoul/enums/theme_enum.dart';
-import 'package:equatable/equatable.dart';
 
 part 'settings_state.dart';
 

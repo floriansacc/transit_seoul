@@ -1,11 +1,14 @@
 enum RouteEnum {
-  home('/home'),
+  app('/'),
+
+  home('/bus'),
   metro('/metro'),
   map('/map'),
 
-  busInfo('/bus-info'),
-  busAroundMe('/bus-around-me'),
+  busInfo('/bus/bus-info'),
+  busAroundMe('/bus/bus-around-me'),
 
+  my('/my'),
   settings('/settings'),
   ;
 

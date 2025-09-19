@@ -7,6 +7,7 @@ import 'package:transit_seoul/services/global_service.dart';
 
 class MetroService extends GlobalService {
   MetroService._privateConstructor();
+
   static final MetroService _instance = MetroService._privateConstructor();
   static MetroService get instance => _instance;
 

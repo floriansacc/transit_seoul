@@ -1,20 +1,26 @@
 import 'dart:io';
 
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:gap/gap.dart';
-import 'package:transit_seoul/router/route_enum.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:transit_seoul/components/confirm_button.dart';
+import 'package:transit_seoul/router/route_enum.dart';
 import 'package:transit_seoul/router/router.dart';
+import 'package:transit_seoul/styles/style_text.dart';
 
 late SharedPreferences prefs;
+
+late FlutterSecureStorage secureStorage;
 
 class PublicMethod {
   static Future<void> preferenceController() async {
     WidgetsFlutterBinding.ensureInitialized();
     prefs = await SharedPreferences.getInstance();
+    secureStorage = const FlutterSecureStorage();
   }
 
   static int parseInt(dynamic value) {
@@ -117,6 +123,9 @@ class PublicMethod {
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Text(
               title,
+              style: StyleText.titleLarge(
+                context ?? navigatorKey.currentContext!,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -129,8 +138,14 @@ class PublicMethod {
             ),
           ),
           const Gap(20),
-          // ConfirmButton(
-          // ),
+          ConfirmButton(
+            description: buttonText,
+            onTap: onTap ??
+                () => Navigator.of(
+                      context ?? navigatorKey.currentContext!,
+                      rootNavigator: true,
+                    ).pop(),
+          ),
         ],
       ),
       canDismiss: dismissible,

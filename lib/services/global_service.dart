@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:transit_seoul/controllers/public_method.dart';
 
 import '../styles/logger.dart';
 
 enum ApiType {
   busInfo('http://ws.bus.go.kr/api/rest'),
   metroInfo('http://swopenAPI.seoul.go.kr/api/subway/[KEY]/json'),
-  kakaomap('');
+  kakaomap(''),
+  localServer('http://localhost:4000');
 
   const ApiType(this.url);
 
@@ -24,6 +28,7 @@ class GlobalService {
     required String path,
     Map<String, String>? queryParameters,
     Map<String, String>? header,
+    Map<String, String>? body,
   }) async {
     assert(path[0] == '/', 'path require a "/"');
 
@@ -34,6 +39,15 @@ class GlobalService {
         },
       ApiType.metroInfo => {},
       ApiType.kakaomap => {},
+      ApiType.localServer => {},
+    };
+    Map<String, String> apiHeader = switch (apiUrl) {
+      ApiType.busInfo => {},
+      ApiType.metroInfo => {},
+      ApiType.kakaomap => {},
+      ApiType.localServer => {
+          'Authorization': 'Bearer ${await secureStorage.read(key: 'token')}',
+        },
     };
 
     final Uri requestUrl = Uri.parse('${apiUrl.url.replaceAll(
@@ -61,6 +75,7 @@ class GlobalService {
           requestUrl,
           headers: {
             ...header ?? {},
+            ...apiHeader,
           },
         );
       case HttpMethod.post:
@@ -68,12 +83,14 @@ class GlobalService {
           requestUrl,
           headers: {
             ...header ?? {},
+            ...apiHeader,
           },
+          body: jsonEncode({...body ?? {}}),
         );
     }
 
     if (kDebugMode) {
-      String logMessage = 'Response.get << $requestUrl\n'
+      String logMessage = 'Response.$method << $requestUrl\n'
           'Response.Code:${response.statusCode}\n'
           '---------------------------------------------------';
 

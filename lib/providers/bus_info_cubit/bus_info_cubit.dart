@@ -1,8 +1,8 @@
-import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 // ignore: avoid_flutter_imports
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:transit_seoul/models/bus/bus_custom_key.dart';
 import 'package:transit_seoul/models/bus/bus_id.dart';
 import 'package:transit_seoul/models/bus/bus_position.dart';

@@ -18,6 +18,7 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PublicMethod.preferenceController();
+
   AuthRepository.initialize(
     appKey: dotenv.env['KAKAO_JAVASCRIPT_KEY']!,
     baseUrl: dotenv.env['BASE_URL']!,
