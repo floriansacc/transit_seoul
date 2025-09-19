@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         children: widget.children,
       ),
       bottomNavigationBar: NavigationBar(
-        height: 50,
+        height: 56,
         destinations: [
           NavigationDestination(
             selectedIcon: Icon(Icons.home),

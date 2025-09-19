@@ -6,6 +6,7 @@ import '../styles/logger.dart';
 
 enum ApiType {
   busInfo('http://ws.bus.go.kr/api/rest'),
+  metroInfo('http://swopenAPI.seoul.go.kr/api/subway/[KEY]/json'),
   kakaomap('');
 
   const ApiType(this.url);
@@ -15,6 +16,7 @@ enum ApiType {
 
 class GlobalService {
   String get dataKrKey => dotenv.env['DATA_KR_API_KEY']!;
+  String get metroKrKey => dotenv.env['METRO_KR_API_KEY']!;
 
   Future<http.Response> httpRequest(
     HttpMethod method, {
@@ -30,10 +32,21 @@ class GlobalService {
           'ServiceKey': dataKrKey,
           'resultType': 'json',
         },
+      ApiType.metroInfo => {},
       ApiType.kakaomap => {},
     };
 
-    final Uri requestUrl = Uri.parse('${apiUrl.url}$path').replace(
+    final Uri requestUrl = Uri.parse('${apiUrl.url.replaceAll(
+      switch (apiUrl) {
+        ApiType.metroInfo => '[KEY]',
+        _ => '',
+      },
+      switch (apiUrl) {
+        ApiType.metroInfo => metroKrKey,
+        _ => '',
+      },
+    )}$path')
+        .replace(
       queryParameters: {
         ...apiResources,
         ...queryParameters ?? {},
